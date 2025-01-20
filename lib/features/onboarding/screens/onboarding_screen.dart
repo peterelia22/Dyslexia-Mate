@@ -86,7 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: SmoothPageIndicator(
               controller: _pageController,
               count: onboardingPages.length,
-              effect: const ExpandingDotsEffect(
+              effect: const JumpingDotEffect(
                 activeDotColor: Colors.white,
                 dotColor: Colors.white54,
                 dotHeight: 8,
