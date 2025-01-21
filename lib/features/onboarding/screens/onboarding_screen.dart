@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../../core/utils/app_routes.dart';
 import '../data/onboarding_data.dart';
 import '../onboarding_card.dart';
 
@@ -63,6 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 backgroundColor: Colors.white,
                 onPressed: () {
                   if (_currentPage == onboardingPages.length - 1) {
+                    Navigator.pushReplacementNamed(context, AppRoutes.register);
                   } else {
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),

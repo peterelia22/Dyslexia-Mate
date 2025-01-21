@@ -1,4 +1,5 @@
 import 'package:dyslexia_mate/core/utils/app_routes.dart';
+import 'package:dyslexia_mate/features/authentication/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'common/screens/splash_screen.dart';
@@ -18,7 +19,8 @@ class DyslexiaMate extends StatelessWidget {
       initialRoute: AppRoutes.splash,
       routes: {
         AppRoutes.splash: (context) => const SplashScreen(),
-        AppRoutes.onBoarding: (context) => const OnboardingScreen()
+        AppRoutes.onBoarding: (context) => const OnboardingScreen(),
+        AppRoutes.register: (context) => const RegisterScreen()
       },
       debugShowCheckedModeBanner: false,
     );
