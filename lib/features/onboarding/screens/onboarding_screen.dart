@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../core/utils/app_routes.dart';
 import '../data/onboarding_data.dart';
-import '../onboarding_card.dart';
+import '../widgets/onboarding_card.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -64,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 backgroundColor: Colors.white,
                 onPressed: () {
                   if (_currentPage == onboardingPages.length - 1) {
-                    Navigator.pushReplacementNamed(context, AppRoutes.register);
+                    Navigator.pushReplacementNamed(context, AppRoutes.login);
                   } else {
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),

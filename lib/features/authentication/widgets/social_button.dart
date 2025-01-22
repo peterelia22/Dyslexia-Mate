@@ -28,7 +28,7 @@ class SocialButton extends StatelessWidget {
         icon: Icon(icon, color: Colors.white),
         label: Text(
           text,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontFamily: 'Maqroo'),
         ),
       ),
     );

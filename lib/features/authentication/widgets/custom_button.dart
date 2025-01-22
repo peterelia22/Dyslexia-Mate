@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
+  final String text;
+
   const CustomButton({
     super.key,
+    required this.text,
   });
 
   @override
@@ -26,16 +29,16 @@ class CustomButton extends StatelessWidget {
           Container(
             clipBehavior: Clip.antiAlias,
             decoration: const BoxDecoration(),
-            child: const Column(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
                   child: Text(
-                    'سجّل الآن',
+                    text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFFF7F9F9),
                       fontSize: 16,
                       fontFamily: 'Maqroo',

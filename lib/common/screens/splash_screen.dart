@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dyslexia_mate/constants/assets.dart';
 import 'package:dyslexia_mate/core/constants/colors.dart';
-import 'package:dyslexia_mate/features/onboarding/onboarding_card.dart';
 
 import '../../core/utils/app_routes.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';

@@ -30,12 +30,7 @@ class RegisterScreen extends StatelessWidget {
                 Center(
                   child: Text(
                     'إنشاء حساب',
-                    style: TextStyle(
-                      color: Color(0xFF3F3381),
-                      fontSize: 32,
-                      fontFamily: 'Maqroo',
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyles.authHeadText,
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -71,7 +66,9 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 13),
-                  child: CustomButton(),
+                  child: CustomButton(
+                    text: 'سجّل الآن',
+                  ),
                 ),
                 Divider(
                   height: 40,
@@ -124,14 +121,8 @@ class RegisterScreen extends StatelessWidget {
                         style: TextStyles.linkText,
                         children: [
                           TextSpan(
-                            text: 'الشروط والأحكام الخاصة بنا',
-                            style: TextStyle(
-                              color: Color(0xFFD8B7FF),
-                              fontSize: 10,
-                              fontFamily: 'Maqroo',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                              text: 'الشروط والأحكام الخاصة بنا',
+                              style: TextStyles.linkText2),
                         ],
                       ),
                       textAlign: TextAlign.left,
