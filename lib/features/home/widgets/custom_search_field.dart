@@ -23,6 +23,7 @@ class CustomSearchField extends StatelessWidget {
           ),
           Expanded(
             child: TextField(
+              textDirection: TextDirection.rtl,
               decoration: const InputDecoration(
                 hintTextDirection: TextDirection.rtl,
                 border: InputBorder.none,

@@ -8,66 +8,86 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: ListView(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 100,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.blue,
+                child: Text("م", style: TextStyles.usernameText),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 100),
-                  Text("مريم", style: TextStyles.usernameText),
-                  SizedBox(height: 5),
-                  Text("Sophie7@gmail.com", style: TextStyles.useremailText),
-                ],
-              ),
+              const SizedBox(height: 12),
+              Text("مريم", style: TextStyles.usernameText),
+              const SizedBox(height: 6),
+              Text("Sophie7@gmail.com", style: TextStyles.useremailText),
+              SizedBox(
+                height: 15,
+              )
+            ],
+          ),
+          Divider(),
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.solidUser),
+                  title: const Text(
+                    "الملف الشخصي",
+                    style: TextStyles.draweritemText,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.share),
+                  title: const Text(
+                    "مشاركة التطبيق",
+                    style: TextStyles.draweritemText,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.solidStar),
+                  title: const Text(
+                    "اكتب رأيك",
+                    style: TextStyles.draweritemText,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.question),
+                  title: const Text(
+                    "الأسئلة الشائعة",
+                    style: TextStyles.draweritemText,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.sliders),
+                  title: const Text(
+                    "الإعدادات",
+                    style: TextStyles.draweritemText,
+                  ),
+                  onTap: () {},
+                ),
+                const Divider(color: Colors.grey),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: Text(
+                    "تسجيل الخروج",
+                    style:
+                        TextStyles.draweritemText.copyWith(color: Colors.red),
+                  ),
+                  onTap: () {},
+                ),
+              ],
             ),
-            ListTile(
-              leading: FaIcon(FontAwesomeIcons.solidUser),
-              title: Text(
-                "الملف الشخصي",
-                style: TextStyles.draweritemText,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: FaIcon(FontAwesomeIcons.share),
-              title: const Text(
-                "مشاركة التطبيق",
-                style: TextStyles.draweritemText,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: FaIcon(FontAwesomeIcons.solidStar),
-              title: const Text(
-                "اكتب رأيك",
-                style: TextStyles.draweritemText,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: FaIcon(FontAwesomeIcons.question),
-              title: const Text(
-                "الأسئلة الشائعة",
-                style: TextStyles.draweritemText,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: FaIcon(FontAwesomeIcons.sliders),
-              title: const Text(
-                "الإعدادات",
-                style: TextStyles.draweritemText,
-              ),
-              onTap: () {},
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

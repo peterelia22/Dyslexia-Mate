@@ -5,10 +5,12 @@ class SpeechToTextScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Speech to Text Screen',
-        style: TextStyle(color: Colors.white),
+    return Scaffold(
+      body: const Center(
+        child: Text(
+          'Speech to Text Screen',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }

@@ -5,8 +5,10 @@ class TextToSpeechScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Text to Speech Screen'),
+    return Scaffold(
+      body: const Center(
+        child: Text('Text to Speech Screen'),
+      ),
     );
   }
 }

@@ -6,6 +6,18 @@ class Assets {
   /// assets/images/background.png
   static const String assetsImagesBackground = "assets/images/background.png";
 
+  /// Assets for assetsImagesCamera
+  /// assets/images/camera.png
+  static const String assetsImagesCamera = "assets/images/camera.png";
+
+  /// Assets for assetsImagesDiscover
+  /// assets/images/discover.png
+  static const String assetsImagesDiscover = "assets/images/discover.png";
+
+  /// Assets for assetsImagesDraw
+  /// assets/images/draw.png
+  static const String assetsImagesDraw = "assets/images/draw.png";
+
   /// Assets for assetsImagesEllipse 2
   /// assets/images/Ellipse 2.png
   static const String assetsImagesEllipse = "assets/images/Ellipse 2.png";
@@ -17,6 +29,10 @@ class Assets {
   /// Assets for assetsImagesLogo
   /// assets/images/logo.png
   static const String assetsImagesLogo = "assets/images/logo.png";
+
+  /// Assets for assetsImagesLogout
+  /// assets/images/logout.png
+  static const String assetsImagesLogout = "assets/images/logout.png";
 
   /// Assets for assetsImagesOnboarding1
   /// assets/images/onboarding_1.png
@@ -37,4 +53,14 @@ class Assets {
   /// assets/images/onboarding_4.png
   static const String assetsImagesOnboarding4 =
       "assets/images/onboarding_4.png";
+
+  /// Assets for assetsImagesSpeechToText
+  /// assets/images/speech_to_text.png
+  static const String assetsImagesSpeechToText =
+      "assets/images/speech_to_text.png";
+
+  /// Assets for assetsImagesTextToSpeech
+  /// assets/images/text_to_speech.png
+  static const String assetsImagesTextToSpeech =
+      "assets/images/text_to_speech.png";
 }

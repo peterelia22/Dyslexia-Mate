@@ -1,15 +1,22 @@
-import 'package:dyslexia_mate/common/widgets/nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../features/game/screens/game_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/speech_to_text/screens/speech_to_text_screen.dart';
 import '../../features/text_to_speech/screens/text_to_speech_screen.dart';
 import '../widgets/custom_drawer.dart';
+import '../widgets/nav_bar.dart';
 
 class MainLayout extends StatefulWidget {
   final Widget child;
-  const MainLayout({super.key, required this.child});
+  final int currentIndex;
+
+  const MainLayout({
+    super.key,
+    required this.child,
+    required this.currentIndex,
+  });
 
   @override
   _MainLayoutState createState() => _MainLayoutState();
@@ -17,6 +24,26 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
+
+  final GlobalKey _homeKey = GlobalKey();
+  final GlobalKey _textToSpeechKey = GlobalKey();
+  final GlobalKey _speechToTextKey = GlobalKey();
+  final GlobalKey _gameKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.currentIndex;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShowCaseWidget.of(context).startShowCase([
+        _homeKey,
+        _textToSpeechKey,
+        _speechToTextKey,
+        _gameKey,
+      ]);
+    });
+  }
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -51,6 +78,10 @@ class _MainLayoutState extends State<MainLayout> {
             _currentIndex = index;
           });
         },
+        homeKey: _homeKey,
+        textToSpeechKey: _textToSpeechKey,
+        speechToTextKey: _speechToTextKey,
+        gameKey: _gameKey,
       ),
     );
   }
