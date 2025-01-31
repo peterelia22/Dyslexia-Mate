@@ -42,6 +42,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   showcaseview: ^4.0.0
   shared_preferences: ^2.4.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -81,13 +82,26 @@ flutter:
         - asset: assets/fonts/PlayfairDisplay-Regular.ttf
         - asset: assets/fonts/PlayfairDisplay-Bold.ttf
           weight: 700
-       
         - asset: assets/fonts/PlayfairDisplay-SemiBold.ttf
           weight: 800
           style: italic
+
     - family: Maqroo
       fonts:
         - asset: assets/fonts/Maqroo-Regular.otf
+
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-Regular.ttf
+        - asset: assets/fonts/Tajawal-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Tajawal-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Tajawal-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Tajawal-ExtraBold.ttf
+          weight: 800
+
         
   #   - family: Trajan Pro
   #     fonts:
