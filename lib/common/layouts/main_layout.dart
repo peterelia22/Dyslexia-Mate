@@ -35,14 +35,16 @@ class _MainLayoutState extends State<MainLayout> {
     super.initState();
     _currentIndex = widget.currentIndex;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
-        _homeKey,
-        _textToSpeechKey,
-        _speechToTextKey,
-        _gameKey,
-      ]);
-    });
+    if (_currentIndex == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([
+          _homeKey,
+          _textToSpeechKey,
+          _speechToTextKey,
+          _gameKey,
+        ]);
+      });
+    }
   }
 
   final List<Widget> _screens = const [
