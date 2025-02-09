@@ -67,4 +67,20 @@ class Assets {
   /// assets/images/text_to_speech.png
   static const String assetsImagesTextToSpeech =
       "assets/images/text_to_speech.png";
+
+  /// Assets for assetsSoundsGame
+  /// assets/sounds/game.mp3
+  static const String assetsSoundsGame = "sounds/game.mp3";
+
+  /// Assets for assetsSoundsHome
+  /// assets/sounds/home.mp3
+  static const String assetsSoundsHome = "sounds/home.mp3";
+
+  /// Assets for assetsSoundsSpeechToText
+  /// assets/sounds/speech_to_text.mp3
+  static const String assetsSoundsSpeechToText = "sounds/speech_to_text.mp3";
+
+  /// Assets for assetsSoundsTextToSpeech
+  /// assets/sounds/text_to_speech.mp3
+  static const String assetsSoundsTextToSpeech = "sounds/text_to_speech.mp3";
 }

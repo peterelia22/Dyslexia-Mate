@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
+  flutter_tts
   uni_links_desktop
   url_launcher_windows
 )
