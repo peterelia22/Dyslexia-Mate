@@ -1,56 +1,37 @@
 import 'package:flutter/material.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomElevatedButton extends StatelessWidget {
   final String text;
+  final VoidCallback? onPressed;
 
-  const CustomButton({
+  const CustomElevatedButton({
     super.key,
     required this.text,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 360,
       height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: Color(0xFF1D1F5A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  child: Text(
-                    text,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFFF7F9F9),
-                      fontSize: 16,
-                      fontFamily: 'Maqroo',
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1D1F5A),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Color(0xFFF7F9F9),
+            fontSize: 16,
+            fontFamily: 'Maqroo',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }

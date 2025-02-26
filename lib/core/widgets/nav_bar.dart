@@ -1,7 +1,8 @@
-import 'package:dyslexia_mate/constants/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:audioplayers/audioplayers.dart';
+
+import '../constants/assets.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int currentIndex;

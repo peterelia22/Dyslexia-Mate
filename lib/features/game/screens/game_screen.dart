@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dyslexia_mate/constants/assets.dart';
 import 'package:dyslexia_mate/helpers/game_launcher.dart';
+
+import '../../../core/constants/assets.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});

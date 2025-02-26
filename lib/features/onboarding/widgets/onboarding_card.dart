@@ -1,5 +1,6 @@
-import 'package:dyslexia_mate/constants/assets.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/constants/assets.dart';
 
 class OnboardingCard extends StatelessWidget {
   final String image;

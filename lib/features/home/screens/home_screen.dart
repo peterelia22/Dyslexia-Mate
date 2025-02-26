@@ -1,15 +1,31 @@
-import 'package:dyslexia_mate/constants/assets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:dyslexia_mate/core/constants/text_styles.dart';
 import 'package:dyslexia_mate/core/utils/app_routes.dart';
-import 'package:flutter/material.dart';
+import '../../../core/constants/assets.dart';
 import '../widgets/custom_search_field.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  Future<String> getUsername() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists && userDoc['username'] != null) {
+        String fullName = userDoc['username'];
+        return fullName.split(" ").first; // جلب الاسم الأول فقط
+      }
+    }
+    return "مستخدم"; // في حالة لم يتم العثور على الاسم
+  }
+
   @override
   Widget build(BuildContext context) {
-    // بيانات المهام (صور وأسماء)
     final List<Map<String, String>> tasks = [
       {
         'image': Assets.assetsImagesCamera,
@@ -37,8 +53,20 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const SizedBox(height: 150),
-              const Center(
-                child: Text('أهلاً, مريم', style: TextStyles.usernameText),
+              Center(
+                child: FutureBuilder<String>(
+                  future: getUsername(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      //   return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text('خطأ في تحميل البيانات',
+                          style: TextStyles.usernameText);
+                    }
+                    return Text('أهلاً, ${snapshot.data}',
+                        style: TextStyles.usernameText);
+                  },
+                ),
               ),
               const SizedBox(height: 10),
               const Center(

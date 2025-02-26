@@ -3,32 +3,40 @@ import 'package:flutter/material.dart';
 class SocialButton extends StatelessWidget {
   final String text;
   final Color color;
-  final IconData icon;
+  final Widget icon;
+  final VoidCallback? onPressed;
 
   const SocialButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.color,
     required this.icon,
-  }) : super(key: key);
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 180,
       height: 36,
-      child: ElevatedButton.icon(
-        onPressed: () {},
+      child: ElevatedButton(
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        icon: Icon(icon, color: Colors.white),
-        label: Text(
-          text,
-          style: TextStyle(color: Colors.white, fontFamily: 'Maqroo'),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: const TextStyle(color: Colors.white, fontFamily: 'Maqroo'),
+            ),
+          ],
         ),
       ),
     );

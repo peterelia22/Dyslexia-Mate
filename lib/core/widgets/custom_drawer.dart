@@ -10,10 +10,10 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 100,
           ),
-          Column(
+          const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
@@ -30,7 +30,7 @@ class CustomDrawer extends StatelessWidget {
               )
             ],
           ),
-          Divider(),
+          const Divider(),
           Expanded(
             child: ListView(
               children: [

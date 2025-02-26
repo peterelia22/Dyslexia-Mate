@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:dyslexia_mate/constants/assets.dart';
-import 'package:dyslexia_mate/core/constants/colors.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/constants/colors.dart';
 import '../../core/utils/app_routes.dart';
-import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../constants/assets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToOnboardingScreen();
+    _checkUserStatus();
 
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
@@ -28,9 +27,14 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  void _navigateToOnboardingScreen() {
+  void _checkUserStatus() {
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.onBoarding);
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.onBoarding);
+      }
     });
   }
 
