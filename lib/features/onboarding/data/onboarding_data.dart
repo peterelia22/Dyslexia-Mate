@@ -1,4 +1,4 @@
-import '../../../constants/assets.dart';
+import '../../../core/constants/assets.dart';
 
 class OnboardingData {
   final String image;
