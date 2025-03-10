@@ -63,7 +63,7 @@ class FirebaseAuthService {
         });
       });
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 

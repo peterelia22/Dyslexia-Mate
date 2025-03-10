@@ -9,12 +9,12 @@ class OnboardingCard extends StatelessWidget {
   final bool isLastPage;
 
   const OnboardingCard({
-    Key? key,
+    super.key,
     required this.image,
     required this.title,
     required this.subtitle,
     this.isLastPage = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class OnboardingCard extends StatelessWidget {
         // Main content
         Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

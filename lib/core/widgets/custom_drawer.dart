@@ -21,9 +21,9 @@ class CustomDrawer extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 child: Text("م", style: TextStyles.usernameText),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text("مريم", style: TextStyles.usernameText),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               Text("Sophie7@gmail.com", style: TextStyles.useremailText),
               SizedBox(
                 height: 15,

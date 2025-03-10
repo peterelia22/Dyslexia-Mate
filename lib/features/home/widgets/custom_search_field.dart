@@ -29,7 +29,7 @@ class CustomSearchField extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: '   ابحث عن نشاط أو تحدي ممتع.... ',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF3D3F49),
+                  color: Color(0xFF3D3F49),
                   fontSize: 16,
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w500,

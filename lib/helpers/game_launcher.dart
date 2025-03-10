@@ -21,7 +21,7 @@ class GameLauncher {
   }
 
   static Future<void> launchGameDownload() async {
-    final String gameUrl = "https://aliwafa.itch.io/the-forgotten-letters";
+    const String gameUrl = "https://aliwafa.itch.io/the-forgotten-letters";
     final Uri uri = Uri.parse(gameUrl);
 
     try {

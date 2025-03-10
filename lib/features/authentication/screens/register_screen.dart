@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:dyslexia_mate/core/constants/colors.dart';
 import 'package:dyslexia_mate/core/constants/assets.dart';
 import 'package:dyslexia_mate/core/constants/text_styles.dart';
-import 'package:dyslexia_mate/core/utils/app_routes.dart';
 import '../controllers/register_controller.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';

@@ -50,7 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           readOnly: widget.isDate,
           onTap: widget.isDate ? () => _selectDate(context) : null,
           decoration: InputDecoration(
-            prefixIcon: Icon(widget.icon, color: Color(0xff3F3381)),
+            prefixIcon: Icon(widget.icon, color: const Color(0xff3F3381)),
             hintText: widget.hintText,
             hintStyle: TextStyles.hintText,
             filled: true,
