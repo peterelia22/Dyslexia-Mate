@@ -7,9 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
   firebase_auth
   firebase_core
-  flutter_secure_storage_windows
   flutter_tts
-  uni_links_desktop
   url_launcher_windows
 )
 
