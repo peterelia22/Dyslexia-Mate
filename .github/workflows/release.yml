@@ -17,12 +17,17 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.2'  # غير للإصدار اللي بتستخدمه
+          flutter-version: '3.24.2'  # غيّر للإصدار اللي بتستخدمه
 
       - name: Install dependencies
         run: flutter pub get
 
-      # ✅ فحص SHA-1 و SHA-256 المستخدمين في GitHub Actions
+      # ✅ توليد Debug Keystore
+      - name: Generate Debug Keystore
+        run: |
+          keytool -genkeypair -v -keystore ~/.android/debug.keystore -alias androiddebugkey \
+          -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android
+
       - name: Check SHA-1 & SHA-256 Fingerprints
         run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android | grep 'SHA1\|SHA-256' || true
 
