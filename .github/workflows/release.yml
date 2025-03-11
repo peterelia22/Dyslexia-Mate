@@ -25,8 +25,8 @@ jobs:
       # ✅ توليد Debug Keystore
       - name: Generate Debug Keystore
         run: |
-          keytool -genkeypair -v -keystore ~/.android/debug.keystore -alias androiddebugkey \
-          -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android
+          keytool -genkeypair -v -keystore ~/.android/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000
+
 
       - name: Check SHA-1 & SHA-256 Fingerprints
         run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android | grep 'SHA1\|SHA-256' || true
