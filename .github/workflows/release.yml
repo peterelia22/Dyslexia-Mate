@@ -22,6 +22,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # ✅ فحص SHA-1 و SHA-256 المستخدمين في GitHub Actions
+      - name: Check SHA-1 & SHA-256 Fingerprints
+        run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android | grep 'SHA1\|SHA-256' || true
+
       - name: Build APK
         run: flutter build apk --release
 
@@ -31,4 +35,3 @@ jobs:
           artifacts: "build/app/outputs/flutter-apk/app-release.apk"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.GH_PAT }}
-
