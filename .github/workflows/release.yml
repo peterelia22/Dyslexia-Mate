@@ -22,15 +22,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # ✅ توليد Debug Keystore
-      - name: Generate Debug Keystore
-        run: |
-          keytool -genkeypair -v -keystore ~/.android/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Peter Ilya Suleiman Qustandi, OU=Development, O=Your Company, L=Nagaa Hammadi, ST=Qena, C=EG"
-
-
-
-      - name: Check SHA-1 & SHA-256 Fingerprints
-        run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android | grep 'SHA1\|SHA-256' || true
+     
 
       - name: Build APK
         run: flutter build apk --release

@@ -6,12 +6,16 @@ import 'dart:async';
 class SpeechController extends GetxController {
   var speech = stt.SpeechToText();
   var isListening = false.obs;
-  var text = 'اضغط على الميكروفون وابدأ التحدث'.obs;
+  var text = ''.obs;
   Timer? timeoutTimer;
+
+  final String defaultText = 'اضغط على الميكروفون وابدأ التحدث';
+  final String listeningText = '...تكلم الآن';
 
   @override
   void onInit() {
     super.onInit();
+    text.value = defaultText;
     initSpeech();
   }
 
@@ -27,12 +31,14 @@ class SpeechController extends GetxController {
       bool available = await speech.initialize();
       if (available) {
         isListening.value = true;
-        text.value = '...تكلم الآن';
+        text.value = listeningText;
 
-        // بدء الاستماع
         speech.listen(
           onResult: (result) {
-            text.value = result.recognizedWords;
+            if (result.recognizedWords.isNotEmpty) {
+              text.value = result.recognizedWords;
+            }
+
             if (result.finalResult) {
               isListening.value = false;
               timeoutTimer?.cancel();
@@ -44,10 +50,9 @@ class SpeechController extends GetxController {
           partialResults: true,
         );
 
-        // مؤقت لإيقاف المايك بعد 4 ثواني بدون نتيجة
         timeoutTimer?.cancel();
         timeoutTimer = Timer(const Duration(seconds: 4), () {
-          if (text.value == '...تكلم الآن') {
+          if (text.value == listeningText) {
             stopListening();
           }
         });
@@ -59,20 +64,24 @@ class SpeechController extends GetxController {
 
   void stopListening() {
     isListening.value = false;
-    text.value = 'اضغط على الميكروفون وابدأ التحدث';
+
+    if (text.value == listeningText || text.value.isEmpty) {
+      text.value = defaultText;
+    }
+
     speech.stop();
     timeoutTimer?.cancel();
   }
 
   void copyToClipboard() {
     if (text.isNotEmpty) {
-      Clipboard.setData(ClipboardData(text: text.value)).then((_) {});
+      Clipboard.setData(ClipboardData(text: text.value));
     }
   }
 
   bool shouldShowCopyIcon() {
     return text.value.isNotEmpty &&
-        text.value != 'اضغط على الميكروفون وابدأ التحدث' &&
-        text.value != '...تكلم الآن';
+        text.value != defaultText &&
+        text.value != listeningText;
   }
 }
