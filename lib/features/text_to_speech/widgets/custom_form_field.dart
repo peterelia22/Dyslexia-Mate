@@ -13,7 +13,7 @@ class CustomFormField extends StatelessWidget {
       child: TextFormField(
         cursorColor: Colors.black,
         controller: controller,
-        maxLines: 20,
+        maxLines: 22,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 13),
           border: InputBorder.none,

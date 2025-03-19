@@ -12,10 +12,10 @@ class TextToSpeechScreen extends StatelessWidget {
     final TextToSpeechController controller = Get.put(TextToSpeechController());
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Color(0xFF7AD1F5),
@@ -32,11 +32,11 @@ class TextToSpeechScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          const TextToSpeechScreenFooter(),
-          const SizedBox(height: 30),
-        ],
+            const SizedBox(height: 20),
+            const TextToSpeechScreenFooter(),
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }
