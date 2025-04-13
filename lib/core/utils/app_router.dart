@@ -22,7 +22,7 @@ class AppRouter {
       AppRoutes.home: (context) =>
           const MainLayout(currentIndex: 0, child: HomeScreen()),
       AppRoutes.speech_to_text: (context) =>
-          const MainLayout(currentIndex: 2, child: SpeechToTextScreen()),
+          MainLayout(currentIndex: 2, child: SpeechToTextScreen()),
       AppRoutes.text_to_speech: (context) =>
           const MainLayout(currentIndex: 1, child: TextToSpeechScreen()),
     };

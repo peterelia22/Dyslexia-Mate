@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
+import 'features/speech_to_text/controllers/speech_to_text_controller.dart';
 import 'firebase_options.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +10,7 @@ import 'core/utils/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  Get.put(SpeechController());
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -36,7 +38,7 @@ class DyslexiaMate extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          initialRoute: AppRoutes.home,
+          initialRoute: AppRoutes.speech_to_text,
           routes: AppRouter.getRoutes(),
           debugShowCheckedModeBanner: false,
         );

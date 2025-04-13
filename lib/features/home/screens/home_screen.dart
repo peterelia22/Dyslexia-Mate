@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       //   return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
-                      return const Text('خطأ في تحميل البيانات',
+                      return Text('خطأ في تحميل البيانات',
                           style: TextStyles.usernameText);
                     }
                     return Text('أهلاً, ${snapshot.data}',
@@ -83,8 +83,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 15),
               const Center(child: CustomSearchField()),
               const SizedBox(height: 18),
-              const Padding(
-                padding: EdgeInsets.only(right: 30),
+              Padding(
+                padding: const EdgeInsets.only(right: 30),
                 child: Text(
                   'مهام اليوم',
                   style: TextStyles.usernameText,
