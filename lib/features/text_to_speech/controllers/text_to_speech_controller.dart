@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import '../../../core/Services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 class TextToSpeechController extends GetxController {
   Rx<File?> imageFile = Rx<File?>(null);

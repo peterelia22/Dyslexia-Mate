@@ -13,8 +13,7 @@ class SpeechController extends GetxController {
   Timer? timeoutTimer;
   FlutterTts flutterTts = FlutterTts();
   var isSpeaking = false.obs;
-  var speechRate = 0.5.obs; // السرعة الافتراضية
-
+  var speechRate = 0.5.obs;
   var currentWordIndex = RxInt(-1);
   var words = RxList<String>([]);
   var scrollPosition = RxDouble(0.0);
