@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import 'dart:math' as math;
+
+import '../../../core/services/tts_service/tts_dervice.dart';
 
 class SpeechController extends GetxController {
   var speech = stt.SpeechToText();
   var isListening = false.obs;
   var text = ''.obs;
   Timer? timeoutTimer;
-  FlutterTts flutterTts = FlutterTts();
+
+  // Use the TTS service instead of creating a new FlutterTts instance
+  final TtsService ttsService = TtsService.to;
+
+  // Screen identifier
+  final String screenName = 'speech_to_text';
+
   var isSpeaking = false.obs;
   var speechRate = 0.5.obs;
   var currentWordIndex = RxInt(-1);
@@ -39,8 +46,19 @@ class SpeechController extends GetxController {
     text.value = defaultText;
     textEditingController.text = defaultText;
     initSpeech();
-    initTts();
     setupListeners();
+
+    // Set the current screen when this controller is initialized
+    ttsService.setCurrentScreen(screenName);
+
+    // Sync the local isSpeaking with the TTS service
+    ever(ttsService.isSpeaking, (bool speaking) {
+      if (!speaking && isSpeaking.value) {
+        isSpeaking.value = false;
+        currentWordIndex.value = -1;
+        isEditingEnabled.value = true;
+      }
+    });
   }
 
   void setupListeners() {
@@ -126,27 +144,6 @@ class SpeechController extends GetxController {
     }
   }
 
-  void initTts() async {
-    await flutterTts.setLanguage("ar-SA");
-    await flutterTts.setSpeechRate(speechRate.value);
-    await flutterTts.setVolume(1.0);
-    await flutterTts.setPitch(1.0);
-
-    flutterTts.setProgressHandler(
-        (String text, int startOffset, int endOffset, String word) {
-      int index = words.indexOf(word, currentWordIndex.value + 1);
-      if (index != -1) {
-        currentWordIndex.value = index;
-      }
-    });
-
-    flutterTts.setCompletionHandler(() {
-      isSpeaking.value = false;
-      currentWordIndex.value = -1;
-      isEditingEnabled.value = true; // Re-enable editing when speech completes
-    });
-  }
-
   void listen() async {
     isEditing.value = false;
     if (!isListening.value) {
@@ -197,16 +194,33 @@ class SpeechController extends GetxController {
     isEditing.value = false;
     if (shouldShowCopyIcon()) {
       if (isSpeaking.value) {
-        await flutterTts.stop();
+        await ttsService.stopSpeaking();
         isSpeaking.value = false;
         currentWordIndex.value = -1;
-        isEditingEnabled.value = true; // Re-enable editing when stopped
+        isEditingEnabled.value = true;
       } else {
         updateWordsList();
         isSpeaking.value = true;
-        isEditingEnabled.value = false; // Disable editing during speech
-        await flutterTts.setSpeechRate(speechRate.value);
-        await flutterTts.speak(text.value);
+        isEditingEnabled.value = false;
+
+        // Use the TTS service with progress handler for word highlighting
+        await ttsService.speak(
+          text: text.value,
+          screenName: screenName,
+          rate: speechRate.value,
+          onProgress:
+              (String text, int startOffset, int endOffset, String word) {
+            int index = words.indexOf(word, currentWordIndex.value + 1);
+            if (index != -1) {
+              currentWordIndex.value = index;
+            }
+          },
+          onComplete: () {
+            isSpeaking.value = false;
+            currentWordIndex.value = -1;
+            isEditingEnabled.value = true;
+          },
+        );
       }
     }
   }
@@ -249,44 +263,12 @@ class SpeechController extends GetxController {
     return isDefaultOrListening || (isEditing.value && canEdit());
   }
 
-  void resetSpeechState() {
-    // Stop listening if active
-    if (isListening.value) {
-      stopListening();
-    }
-
-    // Stop speaking if active
-    if (isSpeaking.value) {
-      flutterTts.stop();
-      isSpeaking.value = false;
-    }
-
-    // Reset current word highlighting
-    currentWordIndex.value = -1;
-
-    // Re-enable editing
-    isEditingEnabled.value = true;
-
-    // Cancel any pending timers
-    timeoutTimer?.cancel();
-
-    // Clear any error states or temporary UI states
-    isEditing.value = false;
-
-    // Reset the speech-to-text results
-    text.value = defaultText;
-    textEditingController.text = defaultText;
-
-    // Clear the words list
-    words.clear();
-
-    // Clear word positions and keys
-    wordPositions.clear();
-    wordKeys.clear();
-  }
-
   @override
   void onClose() {
+    // Stop TTS if this controller's screen is speaking
+    if (ttsService.isSpeakingForScreen(screenName)) {
+      ttsService.stopSpeaking();
+    }
     textEditingController.dispose();
     scrollController.dispose();
     wordKeys.clear();

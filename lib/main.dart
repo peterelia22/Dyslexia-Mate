@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'core/services/tts_service/tts_dervice.dart';
 import 'features/speech_to_text/controllers/speech_to_text_controller.dart';
 import 'firebase_options.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -10,7 +11,8 @@ import 'core/utils/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(SpeechController());
+  Get.put(TtsService(), permanent: true);
+  Get.put(SpeechController(), permanent: true);
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/text_to_speech_controller.dart';
 import '../widgets/custom_form_field.dart';
+import '../widgets/ocr_selection.dart';
 import '../widgets/text_to_speech_screen_footer.dart';
 
 class TextToSpeechScreen extends StatelessWidget {
@@ -88,8 +89,6 @@ class TextToSpeechScreen extends StatelessWidget {
                                         Icons.close,
                                         color: Colors.white,
                                         size: 20,
-                                        // تعتيم الأيقونة عندما تكون معطلة
-                                        //     opacity: controller.isLoading.value ? 0.5 : 1.0,
                                       ),
                                     ),
                                   )),
@@ -102,6 +101,9 @@ class TextToSpeechScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // إضافة شاشة اختيار طريقة OCR
+            const OcrMethodSelector(),
+            const SizedBox(height: 10),
             const TextToSpeechScreenFooter(),
             const SizedBox(height: 30),
             // عرض رسالة الخطأ إذا وجدت

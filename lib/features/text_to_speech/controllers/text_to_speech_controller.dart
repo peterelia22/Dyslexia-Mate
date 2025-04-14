@@ -3,17 +3,39 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/tts_service/tts_dervice.dart';
 
 class TextToSpeechController extends GetxController {
   Rx<File?> imageFile = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
   final textController = TextEditingController();
-  final FlutterTts flutterTts = FlutterTts();
+
+  // Use the TTS service instead of creating a new FlutterTts instance
+  final TtsService ttsService = TtsService.to;
+
+  // Screen identifier
+  final String screenName = 'text_to_speech';
 
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
+
+  // OCR method selection
+  RxString selectedOcrMethod = 'docflow'.obs; // 'docflow' or 'tesseract'
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Set the current screen when this controller is initialized
+    ttsService.setCurrentScreen(screenName);
+  }
+
+  /// اختيار طريقة OCR
+  void selectOcrMethod(String method) {
+    selectedOcrMethod.value = method;
+    // يمكن حفظ التفضيل في التخزين المحلي إذا أردت
+  }
 
   /// اختيار صورة من المعرض
   Future<void> pickImage() async {
@@ -69,7 +91,7 @@ class TextToSpeechController extends GetxController {
     errorMessage.value = '';
   }
 
-  /// التعرف على النصوص باستخدام خدمة ScanDocFlow
+  /// التعرف على النصوص باستخدام الطريقة المختارة
   Future<void> recognizeText() async {
     if (imageFile.value == null) return;
 
@@ -77,28 +99,19 @@ class TextToSpeechController extends GetxController {
     errorMessage.value = '';
 
     try {
-      final extractedDoc = await DocumentService.extractDocument(
-        file: imageFile.value!,
-      );
+      String extractedText = '';
 
-      if (extractedDoc != null &&
-          extractedDoc.documents.isNotEmpty &&
-          extractedDoc.documents[0].textAnnotation != null) {
-        // استخراج النص من جميع الكلمات المستخرجة
-        final allWords = extractedDoc.documents[0].textAnnotation!.pages
-            .expand((page) => page.words)
-            .map((word) => word.text)
-            .join(' ');
-
-        if (allWords.isNotEmpty) {
-          textController.text = allWords;
-        } else {
-          errorMessage.value = "لم يتم العثور على نص";
-          _showSafeMessage("تنبيه", "لم يتم العثور على نص في الصورة");
-        }
+      if (selectedOcrMethod.value == 'docflow') {
+        extractedText = await _recognizeTextWithDocFlow();
       } else {
-        errorMessage.value = "فشل في استخراج النص";
-        _showSafeMessage("خطأ", "فشل في استخراج النص من الصورة");
+        extractedText = await _recognizeTextWithTesseract();
+      }
+
+      if (extractedText.isNotEmpty) {
+        textController.text = extractedText;
+      } else {
+        errorMessage.value = "لم يتم العثور على نص";
+        _showSafeMessage("تنبيه", "لم يتم العثور على نص في الصورة");
       }
     } catch (e) {
       errorMessage.value = "خطأ أثناء معالجة الصورة: $e";
@@ -106,6 +119,44 @@ class TextToSpeechController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// التعرف على النص باستخدام DocFlow API
+  Future<String> _recognizeTextWithDocFlow() async {
+    final extractedDoc = await DocumentService.extractDocument(
+      file: imageFile.value!,
+    );
+
+    if (extractedDoc != null &&
+        extractedDoc.documents.isNotEmpty &&
+        extractedDoc.documents[0].textAnnotation != null) {
+      // استخراج النص من جميع الكلمات المستخرجة
+      final allWords = extractedDoc.documents[0].textAnnotation!.pages
+          .expand((page) => page.words)
+          .map((word) => word.text)
+          .join(' ');
+
+      return allWords;
+    }
+    return '';
+  }
+
+  /// التعرف على النص باستخدام Tesseract OCR
+  Future<String> _recognizeTextWithTesseract() async {
+    // تحديد اللغات التي سيتم دعمها
+    String language = 'ara+eng'; // العربية والإنجليزية
+
+    // استخدام مكتبة Tesseract للتعرف على النص
+    String extractedText = await FlutterTesseractOcr.extractText(
+      imageFile.value!.path,
+      language: language,
+      args: {
+        "psm": "4", // نمط تقسيم الصفحة لتحسين النتائج
+        "preserve_interword_spaces": "1",
+      },
+    );
+
+    return extractedText;
   }
 
   /// الكشف عن اللغة
@@ -147,16 +198,18 @@ class TextToSpeechController extends GetxController {
       languageCode = "ar-SA";
     }
 
-    await flutterTts.setLanguage(languageCode);
-    await flutterTts.setPitch(1.0);
-    await flutterTts.setSpeechRate(0.5);
-    await flutterTts.setVolume(1.0);
-    await flutterTts.speak(text);
+    // Use the TTS service instead of the local FlutterTts instance
+    await ttsService.speak(
+      text: text,
+      screenName: screenName,
+      rate: 0.5,
+      language: languageCode,
+    );
   }
 
   /// إيقاف القراءة
   Future<void> stopReading() async {
-    await flutterTts.stop();
+    await ttsService.stopSpeaking();
   }
 
   /// مسح النص
@@ -166,7 +219,10 @@ class TextToSpeechController extends GetxController {
 
   @override
   void onClose() {
-    flutterTts.stop();
+    // Stop TTS if this controller's screen is speaking
+    if (ttsService.isSpeakingForScreen(screenName)) {
+      ttsService.stopSpeaking();
+    }
     textController.dispose();
     super.onClose();
   }
