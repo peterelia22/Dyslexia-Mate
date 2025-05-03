@@ -130,15 +130,78 @@ class TextToSpeechController extends GetxController {
     if (extractedDoc != null &&
         extractedDoc.documents.isNotEmpty &&
         extractedDoc.documents[0].textAnnotation != null) {
-      // استخراج النص من جميع الكلمات المستخرجة
-      final allWords = extractedDoc.documents[0].textAnnotation!.pages
-          .expand((page) => page.words)
-          .map((word) => word.text)
-          .join(' ');
+      // استخراج النص من جميع الصفحات
+      final pages = extractedDoc.documents[0].textAnnotation!.pages;
 
-      return allWords;
+      // معالجة كل صفحة على حدة
+      List<String> processedPages = [];
+
+      for (var page in pages) {
+        // تقسيم الصفحة إلى أسطر بناءً على الإحداثيات
+        Map<double, List<String>> lineMap = {};
+
+        for (var word in page.words) {
+          // استخدام الإحداثي Y من الـ outline كمفتاح للسطر
+          // نأخذ متوسط الإحداثي Y لتحسين دقة التجميع
+          List<double> yCoords = [];
+          for (int i = 1; i < word.outline.length; i += 2) {
+            yCoords.add(word.outline[i]);
+          }
+          double avgY = yCoords.reduce((a, b) => a + b) / yCoords.length;
+          double lineKey = (avgY / 10).round() * 10;
+
+          if (!lineMap.containsKey(lineKey)) {
+            lineMap[lineKey] = [];
+          }
+
+          lineMap[lineKey]!.add(word.text);
+        }
+
+        // معالجة كل سطر
+        List<String> processedLines = [];
+
+        // ترتيب الأسطر من أعلى إلى أسفل
+        List<double> sortedKeys = lineMap.keys.toList()..sort();
+
+        for (var key in sortedKeys) {
+          List<String> line = lineMap[key]!;
+
+          // تحديد ما إذا كان السطر عربيًا بشكل أساسي
+          bool isLineMainlyArabic = _isMainlyArabic(line.join(' '));
+
+          // عكس ترتيب الكلمات في السطر إذا كان عربيًا
+          if (isLineMainlyArabic) {
+            // ترتيب الكلمات من اليمين إلى اليسار مع الحفاظ على ترتيب الكلمات داخل السطر
+            processedLines.add(line.reversed.join(' '));
+          } else {
+            processedLines.add(line.join(' '));
+          }
+        }
+
+        // إضافة الصفحة المعالجة
+        processedPages.add(processedLines.join('\n'));
+      }
+
+      return processedPages.join('\n\n');
     }
     return '';
+  }
+
+  /// التحقق مما إذا كان النص عربيًا بشكل أساسي
+  bool _isMainlyArabic(String text) {
+    int arabicCount = 0;
+    int nonArabicCount = 0;
+
+    for (int i = 0; i < text.length; i++) {
+      if (RegExp(r'[\u0600-\u06FF]').hasMatch(text[i])) {
+        arabicCount++;
+      } else if (RegExp(r'[a-zA-Z0-9]').hasMatch(text[i])) {
+        nonArabicCount++;
+      }
+    }
+
+    // إذا كان أكثر من 50% من الأحرف عربية، نعتبر النص عربيًا بشكل أساسي
+    return arabicCount > nonArabicCount;
   }
 
   /// التعرف على النص باستخدام Tesseract OCR
@@ -156,6 +219,7 @@ class TextToSpeechController extends GetxController {
       },
     );
 
+    // إرجاع النص كما هو دون عكس (للتesseract)
     return extractedText;
   }
 

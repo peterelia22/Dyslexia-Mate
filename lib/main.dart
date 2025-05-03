@@ -40,7 +40,7 @@ class DyslexiaMate extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          initialRoute: AppRoutes.speech_to_text,
+          initialRoute: AppRoutes.splash,
           routes: AppRouter.getRoutes(),
           debugShowCheckedModeBanner: false,
         );

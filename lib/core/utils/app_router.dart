@@ -1,3 +1,8 @@
+import 'package:dyslexia_mate/core/screens/splash_screen.dart';
+import 'package:dyslexia_mate/features/authentication/screens/login_screen.dart';
+import 'package:dyslexia_mate/features/authentication/screens/register_screen.dart';
+import 'package:dyslexia_mate/features/dyslexia_test/screens/start_screen.dart';
+import 'package:dyslexia_mate/features/onboarding/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/game/screens/game_screen.dart';
 import '../../features/home/screens/home_screen.dart';
@@ -15,6 +20,11 @@ class AppRouter {
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
+      AppRoutes.startQuiz: (context) => const StartScreen(),
+      AppRoutes.login: (context) => LoginScreen(),
+      AppRoutes.register: (context) => RegisterScreen(),
+      AppRoutes.onBoarding: (context) => const OnboardingScreen(),
+      AppRoutes.splash: (context) => const SplashScreen(),
       AppRoutes.home: (context) => const MainLayout(
             child: HomeScreen(),
             currentIndex: 0,

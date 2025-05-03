@@ -8,4 +8,5 @@ class AppRoutes {
   static const String speech_to_text = "/speech_to_text";
   static const String text_to_speech = "/text_to_speech";
   static const String mainLayout = "/mainLayout";
+  static const String startQuiz = "/startQuiz";
 }

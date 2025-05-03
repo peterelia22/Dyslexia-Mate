@@ -38,8 +38,10 @@ dependencies:
   device_preview: ^1.2.0
   firebase_auth: ^5.5.0
   firebase_core: ^3.12.0
+  fl_chart: ^0.66.0
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
   flutter_screenutil: ^5.9.3
   flutter_speed_dial: ^7.0.0
   flutter_tesseract_ocr: ^0.4.28
@@ -110,6 +112,11 @@ flutter:
           weight: 500
         - asset: assets/fonts/Tajawal-ExtraBold.ttf
           weight: 800
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

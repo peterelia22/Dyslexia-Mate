@@ -128,6 +128,6 @@ class RegisterController extends GetxController {
 
   void _navigateToHome(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
+    Navigator.pushReplacementNamed(context, AppRoutes.startQuiz);
   }
 }
