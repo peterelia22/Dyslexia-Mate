@@ -84,12 +84,26 @@ class LoginScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SocialButton(
-                    onPressed: () => _controller.signInWithGoogle(context),
-                    text: 'جوجل',
-                    color: AppColors.buttonColor,
-                    icon: const Icon(Icons.g_mobiledata, color: Colors.white),
-                  ),
+                  Obx(() => SocialButton(
+                        onPressed: _controller.isGoogleLoading.value
+                            ? null
+                            : () => _controller.signInWithGoogle(context),
+                        text: _controller.isGoogleLoading.value
+                            ? 'جاري التحميل...'
+                            : 'جوجل',
+                        color: AppColors.buttonColor,
+                        icon: _controller.isGoogleLoading.value
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.g_mobiledata,
+                                color: Colors.white),
+                      )),
                   const SizedBox(width: 10),
                   //      SocialButton(
                   //      text: 'فيسبوك',

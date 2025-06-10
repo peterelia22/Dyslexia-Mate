@@ -5,6 +5,9 @@ class Assets {
   /// Assets for assetsImagesBackground
   /// assets/images/background.png
   static const String assetsImagesBackground = "assets/images/background.png";
+  static const String assetsImagesDrawer = "assets/images/drawer.png";
+  static const String assetsImagesLightDrawer =
+      "assets/images/light_drawer.png";
 
   /// Assets for assetsImagesCamera
   /// assets/images/camera.png

@@ -35,7 +35,9 @@ class _MainLayoutState extends State<MainLayout> {
     super.initState();
     _currentIndex = widget.currentIndex;
 
+    // إصلاح: استخدام _currentIndex بدلاً من currentIndex
     if (_currentIndex == 0) {
+      // إصلاح: إضافة parameter للـ Duration
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ShowCaseWidget.of(context).startShowCase([
           _homeKey,
@@ -58,6 +60,7 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      //  extendBody: true, // مهم عشان الـ body يمتد تحت الـ navbar
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -71,7 +74,7 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ),
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       body: _screens[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,

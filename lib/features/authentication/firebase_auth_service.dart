@@ -46,25 +46,240 @@ class FirebaseAuthService {
       String dateOfBirth, String username) async {
     try {
       await _firestore.runTransaction((transaction) async {
+        // إنشاء document المستخدم
         DocumentReference userDoc = _firestore.collection('users').doc(uid);
-
         transaction.set(userDoc, {
           'fullName': fullName,
+          'username': username,
           'email': email,
           'dateOfBirth': dateOfBirth,
-          'username': username,
+          'hasDyslexiaTest': false, // لم يقم بالاختبار بعد
+          'dyslexiaRiskLevel': null,
+          'dyslexiaTestDate': null,
         });
 
-        DocumentReference scoreDoc = userDoc.collection('score').doc('games');
-        transaction.set(scoreDoc, {
-          'game1': 0,
-          'game2': 0,
-          'game3': 0,
+        // إنشاء draw_letter document بـ rounds فاضي
+        DocumentReference drawLetterDoc =
+            userDoc.collection('game_data').doc('draw_letter');
+        transaction.set(drawLetterDoc, {
+          'correctScore': 0,
+          'incorrectScore': 0,
+          'rounds': [], // فاضي - سيتم إضافة rounds عند اللعب فقط
+        });
+
+        // إنشاء letter_hunt document بـ rounds فاضي
+        DocumentReference letterHuntDoc =
+            userDoc.collection('game_data').doc('letter_hunt');
+        transaction.set(letterHuntDoc, {
+          'correctScore': 0,
+          'incorrectScore': 0,
+          'rounds': [], // فاضي - سيتم إضافة rounds عند اللعب فقط
+        });
+
+        // إنشاء object_detection document بـ rounds فاضي
+        DocumentReference objectDetectionDoc =
+            userDoc.collection('game_data').doc('object_detection');
+        transaction.set(objectDetectionDoc, {
+          'correctScore': 0,
+          'incorrectScore': 0,
+          'rounds': [], // فاضي - سيتم إضافة rounds عند اللعب فقط
+        });
+
+        // إنشاء player_data document
+        DocumentReference playerDataDoc =
+            userDoc.collection('game_data').doc('player_data');
+        transaction.set(playerDataDoc, {
+          'energyPoints': 0,
+          'lastTimeEnergyIncreasedUTC': "",
+          'unlockedSkillNames': [],
         });
       });
     } catch (e) {
       rethrow;
     }
+  }
+
+  // دالة لحفظ نتائج اختبار عسر القراءة في subcollection منفصل
+  Future<void> saveDyslexiaTestResults(
+      String uid, Map<String, dynamic> testData) async {
+    try {
+      DocumentReference userDoc = _firestore.collection('users').doc(uid);
+
+      // إنشاء dyslexia_test subcollection مع document للنتائج
+      DocumentReference dyslexiaTestDoc =
+          userDoc.collection('dyslexia_test').doc('test_result');
+
+      await _firestore.runTransaction((transaction) async {
+        // حفظ نتائج الاختبار في subcollection منفصل
+        transaction.set(dyslexiaTestDoc, testData);
+
+        // تحديث وثيقة المستخدم الرئيسية
+        transaction.update(userDoc, {
+          'hasDyslexiaTest': true,
+          'dyslexiaRiskLevel': testData['riskLevel'],
+          'dyslexiaTestDate': testData['testDate'],
+        });
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // دالة للتحقق من وجود اختبار عسر القراءة
+  Future<bool> hasDyslexiaTest(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+        return data['hasDyslexiaTest'] ?? false;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // دالة لجلب نتائج اختبار عسر القراءة من subcollection
+  Future<Map<String, dynamic>?> getDyslexiaTestResults(String uid) async {
+    try {
+      DocumentSnapshot dyslexiaDoc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('dyslexia_test')
+          .doc('test_result')
+          .get();
+
+      if (dyslexiaDoc.exists) {
+        return dyslexiaDoc.data() as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // دالة لحذف نتائج اختبار عسر القراءة (في حالة الحاجة لإعادة الاختبار)
+  Future<void> deleteDyslexiaTestResults(String uid) async {
+    try {
+      DocumentReference userDoc = _firestore.collection('users').doc(uid);
+      DocumentReference dyslexiaTestDoc =
+          userDoc.collection('dyslexia_test').doc('test_result');
+
+      await _firestore.runTransaction((transaction) async {
+        // حذف نتائج الاختبار
+        transaction.delete(dyslexiaTestDoc);
+
+        // تحديث وثيقة المستخدم الرئيسية
+        transaction.update(userDoc, {
+          'hasDyslexiaTest': false,
+          'dyslexiaRiskLevel': null,
+          'dyslexiaTestDate': null,
+        });
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // دالة لإضافة round جديدة لأي لعبة
+  Future<void> addGameRound(
+      String uid, String gameType, Map<String, dynamic> roundData) async {
+    try {
+      DocumentReference gameDoc = _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('game_data')
+          .doc(gameType);
+
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(gameDoc);
+
+        if (snapshot.exists) {
+          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+          List<dynamic> rounds = List.from(data['rounds'] ?? []);
+          rounds.add(roundData);
+
+          transaction.update(gameDoc, {
+            'rounds': rounds,
+          });
+        }
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // دالة لتحديث النقاط
+  Future<void> updateGameScore(
+      String uid, String gameType, int correctScore, int incorrectScore) async {
+    try {
+      DocumentReference gameDoc = _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('game_data')
+          .doc(gameType);
+
+      await gameDoc.update({
+        'correctScore': FieldValue.increment(correctScore),
+        'incorrectScore': FieldValue.increment(incorrectScore),
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // مثال لإضافة round للعبة draw_letter
+  // هيكل الـ round: {isCorrect: bool, targetLetter: String, timestampCairoTime: String}
+  Future<void> addDrawLetterRound(
+    String uid, {
+    required bool isCorrect,
+    required String targetLetter,
+    required String timestampCairoTime,
+  }) async {
+    Map<String, dynamic> roundData = {
+      'isCorrect': isCorrect,
+      'targetLetter': targetLetter,
+      'timestampCairoTime': timestampCairoTime,
+    };
+
+    await addGameRound(uid, 'draw_letter', roundData);
+  }
+
+  // مثال لإضافة round للعبة letter_hunt
+  // هيكل الـ round: {chosenWordCorrectFormate: String, isCorrect: bool, targetLetter: String, timestampCairoTime: String}
+  Future<void> addLetterHuntRound(
+    String uid, {
+    required String chosenWordCorrectFormate,
+    required bool isCorrect,
+    required String targetLetter,
+    required String timestampCairoTime,
+  }) async {
+    Map<String, dynamic> roundData = {
+      'chosenWordCorrectFormate': chosenWordCorrectFormate,
+      'isCorrect': isCorrect,
+      'targetLetter': targetLetter,
+      'timestampCairoTime': timestampCairoTime,
+    };
+
+    await addGameRound(uid, 'letter_hunt', roundData);
+  }
+
+  // مثال لإضافة round للعبة object_detection
+  // هيكل الـ round: {isCorrect: bool, targetLetter: String, timestampCairoTime: String}
+  Future<void> addObjectDetectionRound(
+    String uid, {
+    required bool isCorrect,
+    required String targetLetter,
+    required String timestampCairoTime,
+  }) async {
+    Map<String, dynamic> roundData = {
+      'isCorrect': isCorrect,
+      'targetLetter': targetLetter,
+      'timestampCairoTime': timestampCairoTime,
+    };
+
+    await addGameRound(uid, 'object_detection', roundData);
   }
 
   Future<Map<String, dynamic>> signIn(String email, String password) async {

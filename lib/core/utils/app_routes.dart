@@ -9,4 +9,5 @@ class AppRoutes {
   static const String text_to_speech = "/text_to_speech";
   static const String mainLayout = "/mainLayout";
   static const String startQuiz = "/startQuiz";
+  static const String feedBack = "/feedBack";
 }

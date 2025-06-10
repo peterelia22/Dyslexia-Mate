@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/services/tts_service/tts_dervice.dart';
 import '../../../core/utils/app_routes.dart';
+import '../../authentication/firebase_auth_service.dart';
 import '../controllers/quiz_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -16,11 +18,87 @@ class ResultScreen extends StatefulWidget {
 
 class _ResultScreenState extends State<ResultScreen> {
   static const String screenName = 'ResultScreen';
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  bool _isSavingData = false;
 
   @override
   void initState() {
     super.initState();
     TtsService.to.setCurrentScreen(screenName);
+  }
+
+  // Function to save dyslexia test results to Firestore
+  Future<void> _saveDyslexiaTestResults(QuizController controller) async {
+    if (_isSavingData) return;
+
+    setState(() {
+      _isSavingData = true;
+    });
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        _showSnackBar('يجب تسجيل الدخول لحفظ النتائج', isError: true);
+        return;
+      }
+
+      // Check if user already has a dyslexia test
+      bool hasTest = await _authService.hasDyslexiaTest(user.uid);
+      if (hasTest) {
+        _showSnackBar('لقد قمت بإجراء الاختبار من قبل', isError: true);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        return;
+      }
+
+      // Calculate total duration
+      final totalDuration = controller.results
+          .fold<double>(0, (sum, result) => sum + result.duration);
+
+      // Create dyslexia test data
+      Map<String, dynamic> dyslexiaTestData = {
+        'correctAnswers': controller.correctAnswers.value,
+        'incorrectAnswers': controller.incorrectAnswers.value,
+        'totalQuestions': controller.exercises.length,
+        'riskLevel': controller.getRiskLevel(),
+        'averageResponseTime': totalDuration / controller.exercises.length,
+        'totalDuration': totalDuration,
+        'testDate': DateTime.now().toIso8601String(),
+        'detailedResults': controller.results
+            .map((result) => {
+                  'question': result.question,
+                  'userAnswer': result.userAnswer,
+                  'correctAnswer': result.correctAnswer,
+                  'isCorrect': result.isCorrect,
+                  'duration': result.duration,
+                })
+            .toList(),
+      };
+
+      // Save to Firestore in dyslexia_test subcollection
+      await _authService.saveDyslexiaTestResults(user.uid, dyslexiaTestData);
+
+      _showSnackBar('تم حفظ نتائج الاختبار بنجاح');
+
+      // Navigate to home screen
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } catch (e) {
+      _showSnackBar('حدث خطأ أثناء حفظ النتائج: $e', isError: true);
+    } finally {
+      setState(() {
+        _isSavingData = false;
+      });
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError
+            ? Theme.of(context).colorScheme.error
+            : Theme.of(context).snackBarTheme.backgroundColor,
+      ),
+    );
   }
 
   @override
@@ -194,11 +272,21 @@ class _ResultScreenState extends State<ResultScreen> {
                   SizedBox(height: 24.h),
 
                   ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.home);
-                    },
-                    icon: Icon(Icons.home, size: 20.sp),
-                    label: Text('ابدا رحلتك معنا',
+                    onPressed: _isSavingData
+                        ? null
+                        : () => _saveDyslexiaTestResults(controller),
+                    icon: _isSavingData
+                        ? SizedBox(
+                            width: 20.sp,
+                            height: 20.sp,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(Icons.home, size: 20.sp),
+                    label: Text(
+                        _isSavingData ? 'جاري الحفظ...' : 'ابدا رحلتك معنا',
                         style:
                             TextStyle(fontSize: 16.sp, fontFamily: 'maqroo')),
                     style: ElevatedButton.styleFrom(

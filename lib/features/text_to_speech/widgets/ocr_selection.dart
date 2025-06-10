@@ -27,7 +27,7 @@ class OcrMethodSelector extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            ": اختر طريقة التعرف على النص",
+            "اختر طريقة التعرف على النص:",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
