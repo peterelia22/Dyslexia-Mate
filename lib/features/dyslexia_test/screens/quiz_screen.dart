@@ -1,10 +1,8 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/assets.dart';
 import '../../../core/services/tts_service/tts_dervice.dart';
-import '../../../core/widgets/custom_snackBar.dart';
 import '../controllers/quiz_controller.dart';
 import '../models/exercise_model.dart';
 import '../widgets/auditory_memory_input.dart';

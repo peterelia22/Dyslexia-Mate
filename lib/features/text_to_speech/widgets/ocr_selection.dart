@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/text_to_speech_controller.dart';
 
 class OcrMethodSelector extends StatelessWidget {
-  const OcrMethodSelector({Key? key}) : super(key: key);
+  const OcrMethodSelector({super.key});
 
   @override
   Widget build(BuildContext context) {

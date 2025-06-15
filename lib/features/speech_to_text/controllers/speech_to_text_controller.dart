@@ -13,10 +13,8 @@ class SpeechController extends GetxController {
   var text = ''.obs;
   Timer? timeoutTimer;
 
-  // Use the TTS service instead of creating a new FlutterTts instance
   final TtsService ttsService = TtsService.to;
 
-  // Screen identifier
   final String screenName = 'speech_to_text';
 
   var isSpeaking = false.obs;
@@ -25,16 +23,13 @@ class SpeechController extends GetxController {
   var words = RxList<String>([]);
   var scrollPosition = RxDouble(0.0);
 
-  // Added from screen
   final scrollController = ScrollController();
   final textEditingController = TextEditingController();
   var isEditing = false.obs;
 
-  // Map to track word positions for scrolling
   final Map<int, double> wordPositions = <int, double>{}.obs;
   final Map<int, GlobalKey> wordKeys = <int, GlobalKey>{}.obs;
 
-  // Added to control editing state
   var isEditingEnabled = true.obs;
 
   final String defaultText = 'اضغط على الميكروفون وابدأ التحدث';

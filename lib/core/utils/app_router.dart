@@ -30,20 +30,20 @@ class AppRouter {
       AppRoutes.onBoarding: (context) => const OnboardingScreen(),
       AppRoutes.splash: (context) => const SplashScreen(),
       AppRoutes.home: (context) => const MainLayout(
-            child: HomeScreen(),
             currentIndex: 0,
+            child: HomeScreen(),
           ),
       AppRoutes.text_to_speech: (context) => const MainLayout(
-            child: TextToSpeechScreen(),
             currentIndex: 1,
+            child: TextToSpeechScreen(),
           ),
       AppRoutes.speech_to_text: (context) => MainLayout(
-            child: SpeechToTextScreen(),
             currentIndex: 2,
+            child: SpeechToTextScreen(),
           ),
       AppRoutes.game: (context) => const MainLayout(
-            child: GameScreen(),
             currentIndex: 3,
+            child: GameScreen(),
           ),
     };
   }
@@ -70,29 +70,29 @@ class AppRouter {
       GetPage(
         name: AppRoutes.home,
         page: () => const MainLayout(
-          child: HomeScreen(),
           currentIndex: 0,
+          child: HomeScreen(),
         ),
       ),
       GetPage(
         name: AppRoutes.text_to_speech,
         page: () => const MainLayout(
-          child: TextToSpeechScreen(),
           currentIndex: 1,
+          child: TextToSpeechScreen(),
         ),
       ),
       GetPage(
         name: AppRoutes.speech_to_text,
         page: () => MainLayout(
-          child: SpeechToTextScreen(),
           currentIndex: 2,
+          child: SpeechToTextScreen(),
         ),
       ),
       GetPage(
         name: AppRoutes.game,
         page: () => const MainLayout(
-          child: GameScreen(),
           currentIndex: 3,
+          child: GameScreen(),
         ),
       ),
       GetPage(

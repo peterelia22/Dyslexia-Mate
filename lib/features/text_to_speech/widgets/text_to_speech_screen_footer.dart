@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../controllers/text_to_speech_controller.dart';
 
 class TextToSpeechScreenFooter extends StatelessWidget {
-  const TextToSpeechScreenFooter({Key? key}) : super(key: key);
+  const TextToSpeechScreenFooter({super.key});
 
   @override
   Widget build(BuildContext context) {

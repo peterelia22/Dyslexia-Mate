@@ -6,7 +6,7 @@ import '../widgets/ocr_selection.dart';
 import '../widgets/text_to_speech_screen_footer.dart';
 
 class TextToSpeechScreen extends StatelessWidget {
-  const TextToSpeechScreen({Key? key}) : super(key: key);
+  const TextToSpeechScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,7 @@ class TextToSpeechScreen extends StatelessWidget {
                             Container(
                               margin: const EdgeInsets.only(bottom: 16),
                               width: double.infinity,
-                              constraints: const BoxConstraints(
-                                  maxHeight: 200), // تحديد ارتفاع أقصى للصورة
+                              constraints: const BoxConstraints(maxHeight: 200),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                                 color: Colors.white, // إضافة خلفية بيضاء
@@ -54,11 +53,10 @@ class TextToSpeechScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.file(
                                   controller.imageFile.value!,
-                                  fit: BoxFit.contain, // عرض الصورة كاملة
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
-                            // زر إزالة الصورة - معطل أثناء التحميل
                             Positioned(
                               top: 5,
                               right: 5,
@@ -72,8 +70,7 @@ class TextToSpeechScreen extends StatelessWidget {
                                       padding: const EdgeInsets.all(5),
                                       decoration: BoxDecoration(
                                         color: controller.isLoading.value
-                                            ? Colors
-                                                .grey // لون رمادي عندما يكون معطلاً
+                                            ? Colors.grey
                                             : Colors.red,
                                         shape: BoxShape.circle,
                                         boxShadow: [
@@ -85,7 +82,7 @@ class TextToSpeechScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.close,
                                         color: Colors.white,
                                         size: 20,
@@ -101,12 +98,10 @@ class TextToSpeechScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // إضافة شاشة اختيار طريقة OCR
             const OcrMethodSelector(),
             const SizedBox(height: 10),
             const TextToSpeechScreenFooter(),
             const SizedBox(height: 30),
-            // عرض رسالة الخطأ إذا وجدت
             Obx(() => controller.errorMessage.value.isNotEmpty
                 ? Container(
                     margin: const EdgeInsets.symmetric(horizontal: 30),

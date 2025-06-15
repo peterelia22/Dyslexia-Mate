@@ -2,5 +2,6 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "cSpell.words": [
         "allprojects"
-    ]
+    ],
+    "cmake.sourceDirectory": "D:/Graduation/dyslexia_mate/linux"
 }

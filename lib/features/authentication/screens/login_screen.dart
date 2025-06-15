@@ -49,16 +49,16 @@ class LoginScreen extends StatelessWidget {
                 controller: _controller.passwordController,
               ),
               const SizedBox(height: 14),
-              const Padding(
-                padding: EdgeInsets.only(left: 13),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'هل نسيت كلمة المرور؟',
-                    style: TextStyles.linkText,
-                  ),
-                ),
-              ),
+              //    const Padding(
+              //     padding: EdgeInsets.only(left: 13),
+              //      child: Align(
+              //         alignment: Alignment.centerLeft,
+              //         child: Text(
+              //            'هل نسيت كلمة المرور؟',
+              //          style: TextStyles.linkText,
+              //          ),
+              //     ),
+              //     ),
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 13),

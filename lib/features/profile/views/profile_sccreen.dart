@@ -1,9 +1,11 @@
+// ignore_for_file: prefer_single_quotes
 import 'package:dyslexia_mate/features/profile/controllers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/user_model.dart';
+import '../../../core/constants/assets.dart';
 
 class UserProfilePage extends GetView<UserProfileController> {
   const UserProfilePage({super.key});
@@ -17,73 +19,46 @@ class UserProfilePage extends GetView<UserProfileController> {
       builder: (_, child) {
         return Directionality(
           textDirection: TextDirection.rtl,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'الملف الشخصي',
-                style: TextStyle(fontFamily: 'maqroo', fontSize: 18.sp),
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Assets.assetsImagesBackground),
+                fit: BoxFit.cover,
               ),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              actions: [
-                IconButton(
-                  onPressed: controller.refreshData,
-                  icon: const Icon(Icons.refresh),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'logout') {
-                      _showLogoutDialog(context);
-                    } else if (value == 'settings') {
-                      // Navigate to settings
-                      // Get.toNamed('/settings');
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    PopupMenuItem<String>(
-                      value: 'settings',
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.settings, size: 20.w),
-                          SizedBox(width: 8.w),
-                          Text('الإعدادات',
-                              style: TextStyle(fontFamily: 'maqroo')),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'logout',
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.logout, size: 20.w, color: Colors.red),
-                          SizedBox(width: 8.w),
-                          Text('تسجيل الخروج',
-                              style: TextStyle(
-                                  fontFamily: 'maqroo', color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
             ),
-            body: RefreshIndicator(
-              onRefresh: controller.refreshData,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildUserInfoCard(context),
-                    SizedBox(height: 16.h),
-                    _buildAccountInfoCard(),
-                    SizedBox(height: 16.h),
-                    _buildQuickActionsCard(context),
-                    SizedBox(height: 20.h), // Extra space at bottom
-                  ],
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                title: Text(
+                  'الملف الشخصي',
+                  style: TextStyle(fontFamily: 'Tajawal', fontSize: 18.sp),
+                ),
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                actions: [
+                  IconButton(
+                    onPressed: controller.refreshData,
+                    icon: const Icon(Icons.refresh),
+                  ),
+                ],
+              ),
+              body: RefreshIndicator(
+                onRefresh: controller.refreshData,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildUserInfoCard(context),
+                      SizedBox(height: 16.h),
+                      _buildAccountInfoCard(),
+                      SizedBox(height: 16.h),
+                      _buildDyslexiaInfoCard(),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -97,6 +72,7 @@ class UserProfilePage extends GetView<UserProfileController> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      color: Colors.white.withOpacity(0.95),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Obx(() {
@@ -111,10 +87,10 @@ class UserProfilePage extends GetView<UserProfileController> {
           if (userData == null) {
             return SizedBox(
               height: 100.h,
-              child: Center(
+              child: const Center(
                 child: Text(
                   "حدث خطأ في تحميل البيانات",
-                  style: TextStyle(fontFamily: 'maqroo'),
+                  style: TextStyle(fontFamily: 'Tajawal'),
                 ),
               ),
             );
@@ -123,7 +99,6 @@ class UserProfilePage extends GetView<UserProfileController> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Avatar and basic info
               CircleAvatar(
                 radius: 50.r,
                 backgroundColor: Colors.blue,
@@ -135,35 +110,25 @@ class UserProfilePage extends GetView<UserProfileController> {
                     fontSize: 36.sp,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'maqroo',
+                    fontFamily: 'Tajawal',
                   ),
                 ),
               ),
               SizedBox(height: 16.h),
-
-              // Username section
               _buildUsernameSection(userData),
               SizedBox(height: 8.h),
-
-              // Email
               Text(
                 userData.email ?? 'No Email',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Colors.grey[600],
-                  fontFamily: 'maqroo',
+                  fontFamily: 'Tajawal',
                 ),
               ),
               SizedBox(height: 16.h),
-
-              // Full name section
               _buildFullNameSection(userData),
               SizedBox(height: 8.h),
-
-              // Date of birth section
               _buildDateOfBirthSection(context),
-
-              // Age display
               if (controller.getAge() > 0) ...[
                 SizedBox(height: 8.h),
                 Container(
@@ -180,7 +145,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                       fontSize: 14.sp,
                       color: Colors.blue.shade700,
                       fontWeight: FontWeight.w500,
-                      fontFamily: 'maqroo',
+                      fontFamily: 'Tajawal',
                     ),
                   ),
                 ),
@@ -192,10 +157,93 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
+  Widget _buildDyslexiaInfoCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      color: Colors.white.withOpacity(0.95),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Obx(() => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.psychology, color: Colors.purple, size: 24.w),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'معلومات اختبار عسر القراءة',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Tajawal',
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12.h),
+                _buildInfoRowWithIcon(
+                  Icons.assignment_turned_in,
+                  'حالة الاختبار',
+                  controller.hasDyslexiaTest ? 'تم إجراؤه' : 'لم يتم إجراؤه',
+                  valueColor:
+                      controller.hasDyslexiaTest ? Colors.green : Colors.orange,
+                ),
+                if (controller.hasDyslexiaTest) ...[
+                  _buildInfoRowWithIcon(
+                    Icons.trending_up,
+                    'مستوى المخاطر',
+                    controller.getDyslexiaRiskLevelText(),
+                    valueColor: controller.getDyslexiaRiskLevelColor(),
+                  ),
+                  _buildInfoRowWithIcon(
+                    Icons.date_range,
+                    'تاريخ الاختبار',
+                    controller.getFormattedDyslexiaTestDate(),
+                  ),
+                ],
+              ],
+            )),
+      ),
+    );
+  }
+
+  Widget _buildAccountInfoCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      color: Colors.white.withOpacity(0.95),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'معلومات الحساب',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Tajawal',
+              ),
+            ),
+            SizedBox(height: 12.h),
+            _buildInfoRowWithIcon(
+              Icons.date_range,
+              'تاريخ إنشاء الحساب',
+              controller.getAccountCreationDate(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildUsernameSection(UserModel userData) {
     return Obx(() {
       if (controller.isEditingUsername) {
-        return Container(
+        return SizedBox(
           width: double.infinity,
           child: Row(
             children: [
@@ -204,14 +252,16 @@ class UserProfilePage extends GetView<UserProfileController> {
                   controller: controller.usernameController,
                   decoration: InputDecoration(
                     labelText: 'اسم المستخدم',
-                    labelStyle: TextStyle(fontFamily: 'maqroo'),
+                    labelStyle: const TextStyle(fontFamily: 'Tajawal'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
-                  style: TextStyle(fontFamily: 'maqroo'),
+                  style: const TextStyle(fontFamily: 'Tajawal'),
                   textAlign: TextAlign.right,
                 ),
               ),
@@ -223,7 +273,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ? SizedBox(
                         width: 20.w,
                         height: 20.h,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: const CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Icon(Icons.check, color: Colors.green, size: 24.w),
               ),
@@ -245,7 +295,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'maqroo',
+                  fontFamily: 'Tajawal',
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -264,7 +314,7 @@ class UserProfilePage extends GetView<UserProfileController> {
   Widget _buildFullNameSection(UserModel userData) {
     return Obx(() {
       if (controller.isEditingFullName) {
-        return Container(
+        return SizedBox(
           width: double.infinity,
           child: Row(
             children: [
@@ -273,14 +323,16 @@ class UserProfilePage extends GetView<UserProfileController> {
                   controller: controller.fullNameController,
                   decoration: InputDecoration(
                     labelText: 'الاسم الكامل',
-                    labelStyle: TextStyle(fontFamily: 'maqroo'),
+                    labelStyle: const TextStyle(fontFamily: 'Tajawal'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
-                  style: TextStyle(fontFamily: 'maqroo'),
+                  style: const TextStyle(fontFamily: 'Tajawal'),
                   textAlign: TextAlign.right,
                 ),
               ),
@@ -292,7 +344,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ? SizedBox(
                         width: 20.w,
                         height: 20.h,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: const CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Icon(Icons.check, color: Colors.green, size: 24.w),
               ),
@@ -315,7 +367,7 @@ class UserProfilePage extends GetView<UserProfileController> {
 
   Widget _buildDateOfBirthSection(BuildContext context) {
     return Obx(() => InkWell(
-          onTap: () => _showDatePickerOptions(context),
+          onTap: () => controller.selectDate(context),
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -330,7 +382,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'maqroo',
+                        fontFamily: 'Tajawal',
                       ),
                     ),
                     SizedBox(width: 8.w),
@@ -345,7 +397,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         controller.getFormattedDate(),
                         style: TextStyle(
                           fontSize: 16.sp,
-                          fontFamily: 'maqroo',
+                          fontFamily: 'Tajawal',
                           color: controller.selectedDate != null
                               ? Colors.black
                               : Colors.grey,
@@ -363,214 +415,6 @@ class UserProfilePage extends GetView<UserProfileController> {
         ));
   }
 
-  void _showDatePickerOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (BuildContext context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'اختر طريقة تحديد التاريخ',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'maqroo',
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                ListTile(
-                  leading: Icon(Icons.calendar_today, color: Colors.blue),
-                  title: Text(
-                    'منتقي التاريخ العادي',
-                    style: TextStyle(fontFamily: 'maqroo'),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    controller.selectDateAlternative(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.tune, color: Colors.green),
-                  title: Text(
-                    'منتقي التاريخ المخصص',
-                    style: TextStyle(fontFamily: 'maqroo'),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    controller.showCustomDatePicker(context);
-                  },
-                ),
-                SizedBox(height: 10.h),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAccountInfoCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'معلومات الحساب',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'maqroo',
-              ),
-            ),
-            SizedBox(height: 12.h),
-            _buildInfoRowWithIcon(
-              Icons.date_range,
-              'تاريخ إنشاء الحساب',
-              controller.getAccountCreationDate(),
-            ),
-            _buildInfoRowWithIcon(
-              Icons.verified_user,
-              'حالة التحقق',
-              controller.getEmailVerificationStatus(),
-              valueColor:
-                  controller.isEmailVerified() ? Colors.green : Colors.orange,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActionsCard(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'إجراءات سريعة',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'maqroo',
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.sports_esports,
-                    label: 'إحصائيات الألعاب',
-                    color: Colors.green,
-                    onTap: () {
-                      // Navigate to game stats
-                      // Get.toNamed('/game-stats');
-                    },
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.settings,
-                    label: 'الإعدادات',
-                    color: Colors.blue,
-                    onTap: () {
-                      // Navigate to settings
-                      // Get.toNamed('/settings');
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.help,
-                    label: 'المساعدة',
-                    color: Colors.orange,
-                    onTap: () {
-                      // Navigate to help
-                      // Get.toNamed('/help');
-                    },
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _buildActionButton(
-                    icon: Icons.logout,
-                    label: 'تسجيل الخروج',
-                    color: Colors.red,
-                    onTap: () => _showLogoutDialog(context),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 24.w),
-            SizedBox(height: 4.h),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'maqroo',
-                color: color,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildInfoRow(String label, String value, {VoidCallback? onEdit}) {
     return Container(
       width: double.infinity,
@@ -583,7 +427,7 @@ class UserProfilePage extends GetView<UserProfileController> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
-              fontFamily: 'maqroo',
+              fontFamily: 'Tajawal',
             ),
           ),
           Expanded(
@@ -596,7 +440,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     value,
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontFamily: 'maqroo',
+                      fontFamily: 'Tajawal',
                     ),
                     textAlign: TextAlign.right,
                     overflow: TextOverflow.ellipsis,
@@ -631,7 +475,7 @@ class UserProfilePage extends GetView<UserProfileController> {
               label,
               style: TextStyle(
                 fontSize: 14.sp,
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
               ),
             ),
           ),
@@ -640,7 +484,7 @@ class UserProfilePage extends GetView<UserProfileController> {
               value,
               style: TextStyle(
                 fontSize: 14.sp,
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
                 color: valueColor ?? Colors.black,
                 fontWeight: FontWeight.w500,
               ),
@@ -649,46 +493,6 @@ class UserProfilePage extends GetView<UserProfileController> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            title: Text(
-              'تسجيل الخروج',
-              style: TextStyle(fontFamily: 'maqroo'),
-            ),
-            content: Text(
-              'هل أنت متأكد من أنك تريد تسجيل الخروج؟',
-              style: TextStyle(fontFamily: 'maqroo'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'إلغاء',
-                  style: TextStyle(fontFamily: 'maqroo'),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  controller.signOut();
-                },
-                child: Text(
-                  'تسجيل الخروج',
-                  style: TextStyle(fontFamily: 'maqroo', color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

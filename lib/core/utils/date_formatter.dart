@@ -1,7 +1,4 @@
-import 'package:intl/intl.dart';
-
 class DateFormatter {
-  // تحويل التاريخ من ISO 8601 إلى شكل جميل بالعربية
   static String formatArabicDate(String isoDateString) {
     try {
       // تحويل النص إلى DateTime

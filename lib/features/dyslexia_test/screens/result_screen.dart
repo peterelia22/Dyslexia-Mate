@@ -1,4 +1,3 @@
-import 'package:dyslexia_mate/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -279,7 +278,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         ? SizedBox(
                             width: 20.sp,
                             height: 20.sp,
-                            child: CircularProgressIndicator(
+                            child: const CircularProgressIndicator(
                               strokeWidth: 2,
                               color: Colors.white,
                             ),
@@ -334,7 +333,7 @@ class _ResultScreenState extends State<ResultScreen> {
         ],
         rows: controller.results.map((result) {
           return DataRow(
-            color: MaterialStateProperty.all(
+            color: WidgetStateProperty.all(
               result.isCorrect
                   ? Colors.green.withOpacity(0.1)
                   : Colors.red.withOpacity(0.1),

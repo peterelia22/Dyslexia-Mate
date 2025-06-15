@@ -126,26 +126,26 @@ class RegisterScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 12),
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'بتسجيلك، فإنك توافق على ',
-                        style: TextStyles.linkText,
-                        children: [
-                          TextSpan(
-                            text: 'الشروط والأحكام الخاصة بنا',
-                            style: TextStyles.linkText2,
-                          ),
-                        ],
-                      ),
-                      textAlign: TextAlign.left,
-                      textDirection: TextDirection.ltr,
-                    ),
-                  ),
-                )
+                //    const Align(
+                //    alignment: Alignment.centerLeft,
+                //    child: Padding(
+                //      padding: EdgeInsets.only(left: 12),
+                //      child: Text.rich(
+                //       TextSpan(
+                //     text: 'بتسجيلك، فإنك توافق على ',
+                //    style: TextStyles.linkText,
+                //   children: [
+                //      TextSpan(
+                //        text: 'الشروط والأحكام الخاصة بنا',
+                //        style: TextStyles.linkText2,
+                //      ),
+                //    ],
+                //    ),
+                //   textAlign: TextAlign.left,
+                //     textDirection: TextDirection.ltr,
+                //    ),
+                //  ),
+                //  )
               ],
             ),
           ),

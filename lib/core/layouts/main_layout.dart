@@ -74,7 +74,7 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ),
       ),
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: _screens[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,

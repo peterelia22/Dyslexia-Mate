@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dyslexia_mate/core/constants/text_styles.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../features/authentication/firebase_auth_service.dart';
 import '../../features/profile/views/profile_sccreen.dart';
@@ -451,19 +452,26 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     ListTile(
                       leading: FaIcon(
-                        FontAwesomeIcons.share,
+                        FontAwesomeIcons.chartLine,
                         color: Colors.white,
                         size: 20.sp,
                       ),
                       title: Text(
-                        "مشاركة التطبيق",
+                        "رحلة الحروف والكلمات",
                         style: TextStyles.draweritemText.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 16.sp,
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context); // إغلاق الدرج أولاً
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const GameStatsPage()),
+                        );
+                      },
                     ),
                     ListTile(
                       leading: FaIcon(
@@ -485,42 +493,41 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
                     ListTile(
                       leading: FaIcon(
-                        FontAwesomeIcons.question,
+                        FontAwesomeIcons.share,
                         color: Colors.white,
                         size: 20.sp,
                       ),
                       title: Text(
-                        "الأسئلة الشائعة",
+                        "مشاركة التطبيق",
                         style: TextStyles.draweritemText.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 16.sp,
                         ),
                       ),
-                      onTap: () {
-                        Navigator.pop(context); // إغلاق الدرج أولاً
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const GameStatsPage()),
-                        );
+                      onTap: () async {
+                        // Replace with your app's store link or the provided Google Drive link
+                        const String shareText =
+                            'تحقق من تطبيقنا الرائع لدعم القراءة! حمل الآن: https://drive.google.com/drive/u/1/folders/1fQ__trnEprNEQZoan0BvEdloFjaBo2Or';
+                        try {
+                          await Share.share(
+                            shareText,
+                            subject: 'مشاركة تطبيق Dyslexia Mate',
+                          );
+                        } catch (e) {
+                          // Handle any errors during sharing
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'حدث خطأ أثناء المشاركة. حاول مرة أخرى.',
+                                style: TextStyle(
+                                    fontSize: 14.sp, fontFamily: 'maqroo'),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
-                    ),
-                    ListTile(
-                      leading: FaIcon(
-                        FontAwesomeIcons.sliders,
-                        color: Colors.white,
-                        size: 20.sp,
-                      ),
-                      title: Text(
-                        "الإعدادات",
-                        style: TextStyles.draweritemText.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      onTap: () {},
                     ),
                     Divider(color: Colors.white.withOpacity(0.3)),
                     ListTile(

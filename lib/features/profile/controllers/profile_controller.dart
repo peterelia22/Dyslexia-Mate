@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../../core/widgets/custom_snackBar.dart';
 import '../models/user_model.dart';
@@ -20,6 +19,11 @@ class UserProfileController extends GetxController {
   final _isLoadingUserData = false.obs;
   final _selectedDate = Rxn<DateTime>();
 
+  // Dyslexia test information
+  final _dyslexiaRiskLevel = RxnString();
+  final _hasDyslexiaTest = false.obs;
+  final _dyslexiaTestDate = RxnString();
+
   // Getters
   UserModel? get userData => _userData.value;
   bool get isEditingUsername => _isEditingUsername.value;
@@ -27,6 +31,9 @@ class UserProfileController extends GetxController {
   bool get isLoading => _isLoading.value;
   bool get isLoadingUserData => _isLoadingUserData.value;
   DateTime? get selectedDate => _selectedDate.value;
+  String? get dyslexiaRiskLevel => _dyslexiaRiskLevel.value;
+  bool get hasDyslexiaTest => _hasDyslexiaTest.value;
+  String? get dyslexiaTestDate => _dyslexiaTestDate.value;
 
   @override
   void onInit() {
@@ -51,16 +58,24 @@ class UserProfileController extends GetxController {
 
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
+        // Get user basic data
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .get();
 
         if (userDoc.exists) {
-          _userData.value =
-              UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
+          Map<String, dynamic> userData =
+              userDoc.data() as Map<String, dynamic>;
+
+          _userData.value = UserModel.fromMap(userData);
           usernameController.text = _userData.value?.username ?? '';
           fullNameController.text = _userData.value?.fullName ?? '';
+
+          // Set dyslexia test information
+          _hasDyslexiaTest.value = userData['hasDyslexiaTest'] ?? false;
+          _dyslexiaRiskLevel.value = userData['dyslexiaRiskLevel'];
+          _dyslexiaTestDate.value = userData['dyslexiaTestDate'];
 
           // Parse date of birth
           if (_userData.value?.dateOfBirth != null &&
@@ -80,6 +95,42 @@ class UserProfileController extends GetxController {
           ContentType.failure);
     } finally {
       _isLoadingUserData.value = false;
+    }
+  }
+
+  String getDyslexiaRiskLevelText() {
+    if (!_hasDyslexiaTest.value) return 'لم يتم إجراء الاختبار';
+
+    // Return the Arabic text directly from Firestore
+    return _dyslexiaRiskLevel.value ?? 'غير محدد';
+  }
+
+  Color getDyslexiaRiskLevelColor() {
+    if (!_hasDyslexiaTest.value) return Colors.grey;
+
+    // Check Arabic risk level text
+    switch (_dyslexiaRiskLevel.value) {
+      case 'خطر منخفض':
+        return Colors.green;
+      case 'خطر متوسط':
+        return Colors.orange;
+      case 'خطر مرتفع':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String getFormattedDyslexiaTestDate() {
+    if (_dyslexiaTestDate.value == null || _dyslexiaTestDate.value!.isEmpty) {
+      return 'غير محدد';
+    }
+
+    try {
+      DateTime date = DateTime.parse(_dyslexiaTestDate.value!);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return 'غير محدد';
     }
   }
 
@@ -104,7 +155,7 @@ class UserProfileController extends GetxController {
         builder: (BuildContext context) {
           return Theme(
             data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
+              colorScheme: const ColorScheme.light(
                 primary: Colors.blue,
                 onPrimary: Colors.white,
                 surface: Colors.white,
@@ -139,231 +190,6 @@ class UserProfileController extends GetxController {
       _showSnackbar('خطأ', 'حدث خطأ في اختيار التاريخ: ${e.toString()}',
           ContentType.failure);
     }
-  }
-
-  // Alternative method using showDatePicker with proper localization
-  Future<void> selectDateAlternative(BuildContext context) async {
-    try {
-      final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: _selectedDate.value ?? DateTime(2000),
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now(),
-        helpText: 'اختر تاريخ الميلاد',
-        cancelText: 'إلغاء',
-        confirmText: 'موافق',
-        fieldLabelText: 'تاريخ الميلاد',
-        fieldHintText: 'يوم/شهر/سنة',
-        errorFormatText: 'تنسيق التاريخ غير صحيح',
-        errorInvalidText: 'التاريخ غير صالح',
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                surface: Colors.white,
-                onSurface: Colors.black,
-              ),
-            ),
-            child: Directionality(
-              textDirection: TextDirection.ltr, // Keep LTR for date picker
-              child: child!,
-            ),
-          );
-        },
-      );
-
-      if (picked != null && picked != _selectedDate.value) {
-        _selectedDate.value = picked;
-        await updateDateOfBirth();
-      }
-    } catch (e) {
-      _showSnackbar('خطأ', 'حدث خطأ في اختيار التاريخ: ${e.toString()}',
-          ContentType.failure);
-    }
-  }
-
-  // Custom date picker using bottom sheet
-  Future<void> showCustomDatePicker(BuildContext context) async {
-    DateTime tempDate = _selectedDate.value ?? DateTime(2000);
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.4,
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'اختر تاريخ الميلاد',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'maqroo',
-                  ),
-                ),
-                SizedBox(height: 20),
-                Expanded(
-                  child: Row(
-                    children: [
-                      // Day picker
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('اليوم',
-                                style: TextStyle(fontFamily: 'maqroo')),
-                            Expanded(
-                              child: ListWheelScrollView.useDelegate(
-                                itemExtent: 50,
-                                onSelectedItemChanged: (index) {
-                                  tempDate = DateTime(
-                                      tempDate.year, tempDate.month, index + 1);
-                                },
-                                childDelegate: ListWheelChildBuilderDelegate(
-                                  builder: (context, index) {
-                                    if (index < 0 || index >= 31) return null;
-                                    return Center(
-                                      child: Text(
-                                        '${index + 1}',
-                                        style: TextStyle(
-                                            fontSize: 16, fontFamily: 'maqroo'),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Month picker
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('الشهر',
-                                style: TextStyle(fontFamily: 'maqroo')),
-                            Expanded(
-                              child: ListWheelScrollView.useDelegate(
-                                itemExtent: 50,
-                                onSelectedItemChanged: (index) {
-                                  tempDate = DateTime(
-                                      tempDate.year, index + 1, tempDate.day);
-                                },
-                                childDelegate: ListWheelChildBuilderDelegate(
-                                  builder: (context, index) {
-                                    if (index < 0 || index >= 12) return null;
-                                    List<String> months = [
-                                      'يناير',
-                                      'فبراير',
-                                      'مارس',
-                                      'أبريل',
-                                      'مايو',
-                                      'يونيو',
-                                      'يوليو',
-                                      'أغسطس',
-                                      'سبتمبر',
-                                      'أكتوبر',
-                                      'نوفمبر',
-                                      'ديسمبر'
-                                    ];
-                                    return Center(
-                                      child: Text(
-                                        months[index],
-                                        style: TextStyle(
-                                            fontSize: 16, fontFamily: 'maqroo'),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Year picker
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('السنة',
-                                style: TextStyle(fontFamily: 'maqroo')),
-                            Expanded(
-                              child: ListWheelScrollView.useDelegate(
-                                itemExtent: 50,
-                                onSelectedItemChanged: (index) {
-                                  tempDate = DateTime(1950 + index,
-                                      tempDate.month, tempDate.day);
-                                },
-                                childDelegate: ListWheelChildBuilderDelegate(
-                                  builder: (context, index) {
-                                    int year = 1950 + index;
-                                    if (year > DateTime.now().year) return null;
-                                    return Center(
-                                      child: Text(
-                                        '$year',
-                                        style: TextStyle(
-                                            fontSize: 16, fontFamily: 'maqroo'),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                        ),
-                        child: Text(
-                          'إلغاء',
-                          style: TextStyle(
-                              fontFamily: 'maqroo', color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _selectedDate.value = tempDate;
-                          updateDateOfBirth();
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                        ),
-                        child: Text(
-                          'موافق',
-                          style: TextStyle(
-                              fontFamily: 'maqroo', color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> updateUsername() async {
@@ -501,24 +327,6 @@ class UserProfileController extends GetxController {
     return 'غير محدد';
   }
 
-  String getEmailVerificationStatus() {
-    try {
-      return FirebaseAuth.instance.currentUser?.emailVerified == true
-          ? 'تم التحقق'
-          : 'لم يتم التحقق';
-    } catch (e) {
-      return 'غير محدد';
-    }
-  }
-
-  bool isEmailVerified() {
-    try {
-      return FirebaseAuth.instance.currentUser?.emailVerified == true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -540,7 +348,6 @@ class UserProfileController extends GetxController {
         );
       }
     } catch (e) {
-      // Fallback: print error if snackbar fails
       print('Error showing snackbar: $e');
     }
   }

@@ -142,7 +142,7 @@ class TtsService extends GetxService {
         }
 
         // Set a timeout timer as a safety net
-        _timeoutTimer = Timer(Duration(seconds: 30), () {
+        _timeoutTimer = Timer(const Duration(seconds: 30), () {
           print('TTS operation timed out');
           if (!_isDisposed) {
             isSpeaking.value = false;
@@ -174,7 +174,7 @@ class TtsService extends GetxService {
         if (_activeOperation != null && !_activeOperation!.isCompleted) {
           try {
             await _activeOperation!.future.timeout(
-              Duration(milliseconds: 1000),
+              const Duration(milliseconds: 1000),
               onTimeout: () {
                 print('TTS stop operation timed out');
                 _completeActiveOperation();

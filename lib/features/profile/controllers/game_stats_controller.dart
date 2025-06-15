@@ -13,12 +13,14 @@ class GameStatsController extends GetxController {
   final _gamesData = <GameModel>[].obs;
   final _isLoadingPlayerData = false.obs;
   final _isLoadingGamesData = false.obs;
+  final _letterMistakes = <String, Map<String, int>>{}.obs;
 
   // Getters
   PlayerModel? get playerData => _playerData.value;
   List<GameModel> get gamesData => _gamesData;
   bool get isLoadingPlayerData => _isLoadingPlayerData.value;
   bool get isLoadingGamesData => _isLoadingGamesData.value;
+  Map<String, Map<String, int>> get letterMistakes => _letterMistakes;
 
   @override
   void onInit() {
@@ -31,6 +33,7 @@ class GameStatsController extends GetxController {
       getPlayerData(),
       getGameData(),
     ]);
+    analyzeLetterMistakes();
   }
 
   Future<void> refreshData() async {
@@ -110,5 +113,46 @@ class GameStatsController extends GetxController {
     } finally {
       _isLoadingGamesData.value = false;
     }
+  }
+
+  void analyzeLetterMistakes() {
+    _letterMistakes.clear();
+
+    for (var game in _gamesData) {
+      final gameType = game.gameType;
+      final mistakesByLetter = <String, int>{};
+
+      // Analyze rounds to find mistake patterns
+      for (var round in game.rounds) {
+        final bool isCorrect = round['isCorrect'] ?? false;
+        final String targetLetter = round['targetLetter'] ?? '';
+
+        if (!isCorrect && targetLetter.isNotEmpty) {
+          mistakesByLetter[targetLetter] =
+              (mistakesByLetter[targetLetter] ?? 0) + 1;
+        }
+      }
+
+      // Sort letters by mistake count
+      final sortedMistakes = Map.fromEntries(mistakesByLetter.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value)));
+
+      if (sortedMistakes.isNotEmpty) {
+        _letterMistakes[gameType] = sortedMistakes;
+      }
+    }
+  }
+
+  List<String> getMostProblematicLetters(String gameType, {int limit = 3}) {
+    final mistakes = _letterMistakes[gameType];
+    if (mistakes == null || mistakes.isEmpty) {
+      return [];
+    }
+
+    return mistakes.keys.take(limit).toList();
+  }
+
+  int getLetterMistakeCount(String gameType, String letter) {
+    return _letterMistakes[gameType]?[letter] ?? 0;
   }
 }

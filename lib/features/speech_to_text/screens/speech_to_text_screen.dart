@@ -2,9 +2,6 @@ import 'package:dyslexia_mate/features/speech_to_text/controllers/speech_to_text
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'dart:math' as math;
-
-import '../controllers/speech_to_text_controller.dart';
 
 class SpeechToTextScreen extends StatelessWidget {
   SpeechToTextScreen({super.key});
@@ -33,20 +30,17 @@ class SpeechToTextScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: 20.h), // تقليل المساحة الفارغة
+                  SizedBox(height: 20.h),
                   Expanded(
                     child: SingleChildScrollView(
                       controller: speechController.scrollController,
                       child: Obx(() {
-                        // If we should show a TextField
                         if (speechController.shouldShowTextField()) {
                           return Container(
-                            padding: EdgeInsets.only(
-                                top: 20.h), // إضافة padding من الأعلى
+                            padding: EdgeInsets.only(top: 20.h),
                             child: TextField(
-                              textDirection:
-                                  TextDirection.rtl, // تأكيد أن الاتجاه يمين
-                              textAlign: TextAlign.right, // محاذاة النص لليمين
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.right,
                               controller:
                                   speechController.textEditingController,
                               style: TextStyle(
@@ -79,7 +73,6 @@ class SpeechToTextScreen extends StatelessWidget {
                           );
                         }
 
-                        // If we're speaking and have a current word, show highlighted text
                         if (speechController.isSpeaking.value &&
                             speechController.currentWordIndex.value >= 0) {
                           return GestureDetector(
@@ -89,14 +82,12 @@ class SpeechToTextScreen extends StatelessWidget {
                               }
                             },
                             child: Container(
-                              padding: EdgeInsets.only(
-                                  top: 20.h), // إضافة padding من الأعلى
+                              padding: EdgeInsets.only(top: 20.h),
                               child: _buildHighlightedText(),
                             ),
                           );
                         }
 
-                        // Otherwise, show regular text that can be tapped to edit if allowed
                         return GestureDetector(
                           onTap: () {
                             if (speechController.canEdit()) {
@@ -104,8 +95,7 @@ class SpeechToTextScreen extends StatelessWidget {
                             }
                           },
                           child: Container(
-                            padding: EdgeInsets.only(
-                                top: 38.h), // إضافة padding من الأعلى
+                            padding: EdgeInsets.only(top: 38.h),
                             child: Text(
                               speechController.text.value,
                               style: TextStyle(
@@ -128,7 +118,6 @@ class SpeechToTextScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              // Text-to-Speech Icon
                               Obx(() => IconButton(
                                     icon: Icon(
                                       speechController.isSpeaking.value
@@ -149,7 +138,7 @@ class SpeechToTextScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(), // Empty widget for spacing
+                          const SizedBox(),
                         ],
                       );
                     }
@@ -159,7 +148,7 @@ class SpeechToTextScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 10.h), // تقليل المساحة الفارغة
+          SizedBox(height: 10.h),
           Obx(() {
             if (speechController.shouldShowCopyIcon()) {
               return Column(
@@ -170,7 +159,7 @@ class SpeechToTextScreen extends StatelessWidget {
                       'سرعة الصوت',
                       style: TextStyle(
                         fontFamily: 'maqroo',
-                        fontSize: 24.sp, // تصغير حجم النص
+                        fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -189,17 +178,13 @@ class SpeechToTextScreen extends StatelessWidget {
             }
             return const SizedBox.shrink();
           }),
-          SizedBox(height: 10.h), // تقليل المساحة الفارغة
+          SizedBox(height: 10.h),
           Expanded(
             flex: speechController.isListening.value ? 3 : 2,
             child: Obx(() => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: speechController.isListening.value
-                      ? 120.w
-                      : 80.w, // تصغير حجم المايك
-                  height: speechController.isListening.value
-                      ? 120.h
-                      : 80.h, // تصغير حجم المايك
+                  width: speechController.isListening.value ? 120.w : 80.w,
+                  height: speechController.isListening.value ? 120.h : 80.h,
                   decoration: BoxDecoration(
                     color: speechController.isListening.value
                         ? const Color(0xff0A1C3D)
@@ -209,8 +194,8 @@ class SpeechToTextScreen extends StatelessWidget {
                         ? [
                             BoxShadow(
                               color: Colors.blue.withOpacity(0.5),
-                              spreadRadius: 5.r, // تقليل حجم الظل
-                              blurRadius: 10.r, // تقليل حجم الظل
+                              spreadRadius: 5.r,
+                              blurRadius: 10.r,
                               offset: const Offset(0, 0),
                             )
                           ]
@@ -221,7 +206,7 @@ class SpeechToTextScreen extends StatelessWidget {
                       speechController.isListening.value
                           ? Icons.mic
                           : Icons.mic_none,
-                      size: 30.sp, // تصغير حجم أيقونة المايك
+                      size: 30.sp,
                       color: Colors.white,
                     ),
                     onPressed: speechController.listen,
@@ -272,7 +257,6 @@ class SpeechToTextScreen extends StatelessWidget {
         key: _textKey,
         alignment: WrapAlignment.end,
         children: List.generate(words.length, (index) {
-          // Create a key for each word to potentially track its position
           if (!speechController.wordKeys.containsKey(index)) {
             speechController.wordKeys[index] = GlobalKey();
           }
@@ -285,7 +269,7 @@ class SpeechToTextScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 2.w),
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
               decoration: BoxDecoration(
-                color: Color(0xff266b96),
+                color: const Color(0xff266b96),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(

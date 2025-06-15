@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/utils/date_formatter.dart';
 import '../controllers/game_stats_controller.dart';
+import '../../../core/constants/assets.dart';
 
 class GameStatsPage extends GetView<GameStatsController> {
   const GameStatsPage({super.key});
@@ -18,33 +19,43 @@ class GameStatsPage extends GetView<GameStatsController> {
       builder: (_, child) {
         return Directionality(
           textDirection: TextDirection.rtl,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'إحصائيات الألعاب',
-                style: TextStyle(fontFamily: 'maqroo', fontSize: 18.sp),
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Assets.assetsImagesBackground),
+                fit: BoxFit.cover,
               ),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              actions: [
-                IconButton(
-                  onPressed: controller.refreshData,
-                  icon: const Icon(Icons.refresh),
-                ),
-              ],
             ),
-            body: RefreshIndicator(
-              onRefresh: controller.refreshData,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPlayerDataCard(),
-                    SizedBox(height: 16.h),
-                    _buildGamesDataCard(),
-                  ],
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                title: Text(
+                  'إحصائيات الألعاب',
+                  style: TextStyle(fontFamily: 'Tajawal', fontSize: 18.sp),
+                ),
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                actions: [
+                  IconButton(
+                    onPressed: controller.refreshData,
+                    icon: const Icon(Icons.refresh),
+                  ),
+                ],
+              ),
+              body: RefreshIndicator(
+                onRefresh: controller.refreshData,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPlayerDataCard(),
+                      SizedBox(height: 16.h),
+                      _buildGamesDataCard(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -57,6 +68,7 @@ class GameStatsPage extends GetView<GameStatsController> {
   Widget _buildPlayerDataCard() {
     return Card(
       elevation: 4,
+      color: Colors.white.withOpacity(0.95),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -67,7 +79,7 @@ class GameStatsPage extends GetView<GameStatsController> {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
               ),
             ),
             SizedBox(height: 12.h),
@@ -78,9 +90,9 @@ class GameStatsPage extends GetView<GameStatsController> {
 
               final playerData = controller.playerData;
               if (playerData == null) {
-                return Text(
+                return const Text(
                   "لا توجد بيانات لاعب",
-                  style: TextStyle(fontFamily: 'maqroo'),
+                  style: TextStyle(fontFamily: 'Tajawal'),
                 );
               }
 
@@ -107,7 +119,7 @@ class GameStatsPage extends GetView<GameStatsController> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.grey[500],
-                              fontFamily: 'maqroo',
+                              fontFamily: 'Tajawal',
                             ),
                           ),
                         ),
@@ -119,14 +131,14 @@ class GameStatsPage extends GetView<GameStatsController> {
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'maqroo',
+                      fontFamily: 'Tajawal',
                     ),
                   ),
                   SizedBox(height: 4.h),
                   if (playerData.unlockedSkills.isEmpty)
-                    Text(
+                    const Text(
                       'لا توجد مهارات مفتوحة',
-                      style: TextStyle(fontFamily: 'maqroo'),
+                      style: TextStyle(fontFamily: 'Tajawal'),
                     )
                   else
                     Wrap(
@@ -135,7 +147,7 @@ class GameStatsPage extends GetView<GameStatsController> {
                           .map((skill) => Chip(
                                 label: Text(
                                   skill,
-                                  style: TextStyle(fontFamily: 'maqroo'),
+                                  style: const TextStyle(fontFamily: 'Tajawal'),
                                 ),
                                 backgroundColor: Colors.blue.shade100,
                               ))
@@ -153,6 +165,7 @@ class GameStatsPage extends GetView<GameStatsController> {
   Widget _buildGamesDataCard() {
     return Card(
       elevation: 4,
+      color: Colors.white.withOpacity(0.95),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -163,7 +176,7 @@ class GameStatsPage extends GetView<GameStatsController> {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
               ),
             ),
             SizedBox(height: 12.h),
@@ -173,26 +186,35 @@ class GameStatsPage extends GetView<GameStatsController> {
               }
 
               if (controller.gamesData.isEmpty) {
-                return Text(
+                return const Text(
                   "لا توجد بيانات ألعاب",
-                  style: TextStyle(fontFamily: 'maqroo'),
+                  style: TextStyle(fontFamily: 'Tajawal'),
                 );
               }
 
               return Column(
                 children: controller.gamesData.map((gameData) {
+                  // Sort rounds by timestamp in descending order (newest first)
+                  final sortedRounds =
+                      List<Map<String, dynamic>>.from(gameData.rounds);
+                  sortedRounds.sort((a, b) {
+                    final String timestampA = a['timestampCairoTime'] ?? '';
+                    final String timestampB = b['timestampCairoTime'] ?? '';
+                    return timestampB.compareTo(timestampA); // Reverse order
+                  });
+
                   return ExpansionTile(
                     title: Text(
                       gameData.gameNameInArabic,
                       style: TextStyle(
-                        fontFamily: 'maqroo',
+                        fontFamily: 'Tajawal',
                         fontSize: 16.sp,
                       ),
                     ),
                     subtitle: Text(
                       'صحيح: ${gameData.correctScore} | خطأ: ${gameData.incorrectScore} | الجولات: ${gameData.rounds.length}',
                       style: TextStyle(
-                        fontFamily: 'maqroo',
+                        fontFamily: 'Tajawal',
                         fontSize: 14.sp,
                       ),
                     ),
@@ -206,32 +228,37 @@ class GameStatsPage extends GetView<GameStatsController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildScoreCard('إجابات صحيحة',
-                                    gameData.correctScore, Colors.green),
-                                _buildScoreCard('إجابات خاطئة',
-                                    gameData.incorrectScore, Colors.red),
-                                _buildScoreCard('إجمالي الجولات',
-                                    gameData.rounds.length, Colors.blue),
-                              ],
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  _buildScoreCard('إجابات صحيحة',
+                                      gameData.correctScore, Colors.green),
+                                  _buildScoreCard('إجابات خاطئة',
+                                      gameData.incorrectScore, Colors.red),
+                                  _buildScoreCard('إجمالي الجولات',
+                                      gameData.rounds.length, Colors.blue),
+                                ],
+                              ),
                             ),
                             SizedBox(height: 16.h),
-                            if (gameData.rounds.isNotEmpty) ...[
+                            _buildLetterMistakesSection(gameData.gameType),
+                            SizedBox(height: 16.h),
+                            if (sortedRounds.isNotEmpty) ...[
                               Text(
                                 'آخر 5 جولات:',
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: 'maqroo',
+                                  fontFamily: 'Tajawal',
                                 ),
                               ),
                               SizedBox(height: 8.h),
-                              ...gameData.rounds
+                              ...sortedRounds
                                   .take(5)
-                                  .map((round) => _buildRoundCard(round))
-                                  .toList(),
+                                  .map((round) => _buildRoundCard(round)),
                             ],
                           ],
                         ),
@@ -247,6 +274,125 @@ class GameStatsPage extends GetView<GameStatsController> {
     );
   }
 
+  Widget _buildLetterMistakesSection(String gameType) {
+    return Obx(() {
+      final problematicLetters = controller.getMostProblematicLetters(gameType);
+
+      if (problematicLetters.isEmpty) {
+        return Container();
+      }
+
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Colors.amber.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: Colors.amber.shade300),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.lightbulb, color: Colors.amber, size: 24.w),
+                SizedBox(width: 8.w),
+                Text(
+                  'نصائح للتحسين',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Tajawal',
+                    color: Colors.amber.shade800,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'الحروف التي تحتاج إلى مزيد من التركيز:',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: 'Tajawal',
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: problematicLetters.map((letter) {
+                final mistakeCount =
+                    controller.getLetterMistakeCount(gameType, letter);
+                return Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            letter,
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red.shade700,
+                              fontFamily: 'Tajawal',
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'عدد الأخطاء: $mistakeCount',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontFamily: 'Tajawal',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'ركز على تحسين مهاراتك في هذه الحروف للحصول على نتائج أفضل!',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+                color: Colors.grey[600],
+                fontFamily: 'Tajawal',
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
@@ -258,7 +404,7 @@ class GameStatsPage extends GetView<GameStatsController> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
-              fontFamily: 'maqroo',
+              fontFamily: 'Tajawal',
             ),
           ),
           Flexible(
@@ -266,7 +412,7 @@ class GameStatsPage extends GetView<GameStatsController> {
               value,
               style: TextStyle(
                 fontSize: 16.sp,
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
               ),
               textAlign: TextAlign.right,
             ),
@@ -292,7 +438,7 @@ class GameStatsPage extends GetView<GameStatsController> {
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
               color: color,
-              fontFamily: 'maqroo',
+              fontFamily: 'Tajawal',
             ),
           ),
           SizedBox(height: 4.h),
@@ -301,7 +447,7 @@ class GameStatsPage extends GetView<GameStatsController> {
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,
-              fontFamily: 'maqroo',
+              fontFamily: 'Tajawal',
             ),
             textAlign: TextAlign.center,
           ),
@@ -329,13 +475,13 @@ class GameStatsPage extends GetView<GameStatsController> {
           children: [
             Text(
               'الحرف المستهدف: $targetLetter',
-              style: TextStyle(fontFamily: 'maqroo', fontSize: 14.sp),
+              style: TextStyle(fontFamily: 'Tajawal', fontSize: 14.sp),
             ),
             if (chosenWord.isNotEmpty)
               Text(
                 'الكلمة المختارة: $chosenWord',
                 style: TextStyle(
-                  fontFamily: 'maqroo',
+                  fontFamily: 'Tajawal',
                   fontSize: 14.sp,
                   color: Colors.grey[600],
                 ),
@@ -347,12 +493,12 @@ class GameStatsPage extends GetView<GameStatsController> {
           children: [
             Text(
               DateFormatter.formatArabicDate(timestamp),
-              style: TextStyle(fontFamily: 'maqroo', fontSize: 12.sp),
+              style: TextStyle(fontFamily: 'Tajawal', fontSize: 12.sp),
             ),
             Text(
               DateFormatter.formatRelativeTime(timestamp),
               style: TextStyle(
-                fontFamily: 'maqroo',
+                fontFamily: 'Tajawal',
                 fontSize: 11.sp,
                 color: Colors.grey[500],
               ),
@@ -373,7 +519,7 @@ class GameStatsPage extends GetView<GameStatsController> {
               color: isCorrect ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold,
               fontSize: 12.sp,
-              fontFamily: 'maqroo',
+              fontFamily: 'Tajawal',
             ),
           ),
         ),
